@@ -1,0 +1,103 @@
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  STUDENT
+  TUTOR
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  REJECTED
+  COMPLETED
+  CANCELLED
+}
+
+model Profile {
+  id            String    @id // Supabase auth.users.id (UUID) - NOT @default(cuid()), we set this manually to match the Supabase auth user
+  name          String
+  email         String    @unique
+  role          Role
+  avatar        String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  tutorProfile  TutorProfile?
+
+  bookingsAsStudent Booking[] @relation("StudentBookings")
+  bookingsAsTutor   Booking[] @relation("TutorBookings")
+
+  reviewsWritten Review[] @relation("ReviewsWritten")
+}
+
+model TutorProfile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        Profile  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  subjects    String[]
+  hourlyRate  Float
+  bio         String
+  experience  Int      @default(0)
+  verified    Boolean  @default(false)
+  avgRating   Float    @default(0)
+  totalReviews Int     @default(0)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Booking {
+  id         String        @id @default(cuid())
+
+  studentId  String
+  student    Profile       @relation("StudentBookings", fields: [studentId], references: [id])
+
+  tutorId    String
+  tutor      Profile       @relation("TutorBookings", fields: [tutorId], references: [id])
+
+  subject    String
+  dateTime   DateTime
+  duration   Int           @default(60) // minutes
+  price      Float
+  status     BookingStatus @default(PENDING)
+
+  payment    Payment?
+  review     Review?
+
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+}
+
+model Payment {
+  id              String   @id @default(cuid())
+  bookingId       String   @unique
+  booking         Booking  @relation(fields: [bookingId], references: [id])
+
+  stripeSessionId String?
+  amount          Float
+  status          String   @default("PENDING") // PENDING, PAID, FAILED, REFUNDED
+  createdAt       DateTime @default(now())
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  bookingId String   @unique
+  booking   Booking  @relation(fields: [bookingId], references: [id])
+
+  authorId  String
+  author    Profile  @relation("ReviewsWritten", fields: [authorId], references: [id])
+
+  rating    Int      // 1-5
+  comment   String?
+  createdAt DateTime @default(now())
+}
