@@ -3,7 +3,6 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Spinner } from "@/components/ui/spinner"
 import {
   Field,
   FieldDescription,
@@ -13,6 +12,7 @@ import {
   FieldSeparator,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { Spinner } from "@/components/ui/spinner"
 import { toast } from "@/components/ui/toast"
 import { getFriendlyErrorMessage } from "@/lib/errors"
 import { createClient } from "@/lib/supabase/client"
@@ -21,9 +21,9 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { AlertCircleIcon } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { useEffect } from "react"
 import { Controller, useForm } from "react-hook-form"
 import * as z from "zod"
-import { useEffect } from "react"
 
 export function LoginForm({
   className,

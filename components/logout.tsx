@@ -18,6 +18,7 @@ import { LogOut } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { toast } from "./ui/toast"
+import { Spinner } from "./ui/spinner"
 
 export function LogoutButton() {
   const [loading, setLoading] = useState<boolean>(false)
@@ -42,6 +43,8 @@ export function LogoutButton() {
       })
 
       throw new Error("")
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -62,7 +65,12 @@ export function LogoutButton() {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel variant="outline">Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={handleLogout} variant="destructive">
+          <AlertDialogAction
+            disabled={loading}
+            onClick={handleLogout}
+            variant="destructive"
+          >
+            {loading && <Spinner />}
             Log out
           </AlertDialogAction>
         </AlertDialogFooter>

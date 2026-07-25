@@ -1,0 +1,298 @@
+"use client"
+
+import { AvatarUploadModal } from "@/components/avatar-upload-modal"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Spinner } from "@/components/ui/spinner"
+import { Textarea } from "@/components/ui/textarea"
+import { toast } from "@/components/ui/toast"
+import api from "@/lib/axios/api"
+import { SUBJECT_OPTIONS } from "@/lib/constant"
+import { getFriendlyErrorMessage } from "@/lib/errors"
+import { TutorProfileFormValues, tutorProfileSchema } from "@/lib/zod/schemas"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { AlertCircleIcon, BadgeCheck, CloudUpload } from "lucide-react"
+import { useState } from "react"
+import { Controller, useForm } from "react-hook-form"
+
+export function ProfileForm() {
+  const [avatarModalOpen, setAvatarModalOpen] = useState(false)
+  const [subjects, setSubjects] = useState<string[]>([])
+  const form = useForm<TutorProfileFormValues>({
+    resolver: zodResolver(tutorProfileSchema),
+    defaultValues: {
+      email: "",
+      name: "",
+      bio: "",
+      experience: 0,
+      hourlyRate: 0,
+      subjects: [],
+    },
+  })
+
+  const handleSubmit = async (data: TutorProfileFormValues) => {
+    try {
+      const response = await toast.promise(api.post("/upload", data), {
+        loading: "Logging in…",
+        success: "Logged in successfully!",
+        error: (err) =>
+          getFriendlyErrorMessage(err?.code, err?.message || "Login failed"),
+      })
+    } catch (error: any) {
+      const friendlyMessage = getFriendlyErrorMessage(
+        error?.code,
+        error?.message || "Login failed"
+      )
+      form.setError("root", { type: "manual", message: friendlyMessage })
+    }
+  }
+
+  const onSubmit = async (data: TutorProfileFormValues) => {
+    await handleSubmit(data)
+  }
+
+  const toggleSubject = (subject: string) => {
+    setSubjects((prev) =>
+      prev.includes(subject)
+        ? prev.filter((s) => s !== subject)
+        : [...prev, subject]
+    )
+  }
+
+  console.log("Subjects: ", subjects)
+
+  return (
+    <>
+      <form className="" onSubmit={form.handleSubmit(onSubmit)}>
+        <FieldGroup className="gap-4">
+          <div className="relative flex flex-col items-center gap-2 text-center">
+            <Avatar className="h-28 w-28 grayscale">
+              <AvatarImage
+                src="https://i.pravatar.cc/150?img=10"
+                alt="@pranathip"
+              />
+              <AvatarFallback>PP</AvatarFallback>
+              <Button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setAvatarModalOpen(true)
+                }}
+                size={"icon-sm"}
+                className="absolute right-0 bottom-0 z-10 rounded-full"
+              >
+                <CloudUpload className="pointer-events-none h-5 w-5 cursor-pointer" />
+              </Button>
+            </Avatar>
+            <div className="flex flex-col items-center">
+              <Label className="text-xl">Anamul Hoque</Label>
+              <p className="text-sm text-muted-foreground">
+                Software developer
+              </p>
+            </div>
+            <Badge
+              className="absolute top-0 right-0 bg-sky-50 text-sky-700 dark:bg-sky-950 dark:text-sky-300"
+              variant="secondary"
+            >
+              <BadgeCheck data-icon="inline-start" />
+              Verified
+            </Badge>
+          </div>
+          <Controller
+            name="email"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={field.name}>Email</FieldLabel>
+                <Input
+                  {...field}
+                  id={field.name}
+                  aria-invalid={fieldState.invalid}
+                  placeholder="anam@gmail.com"
+                  autoComplete="off"
+                  disabled
+                />
+                <FieldDescription>
+                  This field is currently disabled.
+                </FieldDescription>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+
+          <Controller
+            name="name"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={field.name}>Name</FieldLabel>
+
+                <Input
+                  {...field}
+                  id={field.name}
+                  aria-invalid={fieldState.invalid}
+                  placeholder="Anamul Hoque"
+                  autoComplete="off"
+                />
+
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+
+          <Controller
+            name="bio"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={field.name}>Bio</FieldLabel>
+                <Textarea
+                  {...field}
+                  id={field.name}
+                  aria-invalid={fieldState.invalid}
+                  placeholder="Hi, this is Anam, a Softwere developer"
+                  autoComplete="off"
+                />
+
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+
+          <div className="grid grid-cols-2 gap-4">
+            <Controller
+              name="hourlyRate"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor={field.name}>Hourly rate</FieldLabel>
+
+                  <Input
+                    {...field}
+                    id={field.name}
+                    aria-invalid={fieldState.invalid}
+                    placeholder="How much do you want to charge per hour for your services?"
+                    autoComplete="off"
+                  />
+
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+            <Controller
+              name="experience"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor={field.name}>
+                    Years of Experience
+                  </FieldLabel>
+
+                  <Input
+                    {...field}
+                    id={field.name}
+                    aria-invalid={fieldState.invalid}
+                    placeholder="How many years of experience do you have in the service you want to offer?"
+                    autoComplete="off"
+                  />
+
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+          </div>
+
+          <Controller
+            name="subjects"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={field.name}>Subjects you teach</FieldLabel>
+
+                <div className="flex flex-wrap gap-2">
+                  {SUBJECT_OPTIONS.map((subject) => (
+                    <Button
+                      size={"sm"}
+                      key={subject}
+                      onClick={() => toggleSubject(subject)}
+                      variant={
+                        subjects?.includes(subject) ? "default" : "secondary"
+                      }
+                    >
+                      {subject}
+                    </Button>
+                  ))}
+                </div>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  Selected: {subjects.length > 0 ? subjects.join(", ") : "None"}
+                </p>
+
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+
+          {/* root error message */}
+          {form.formState.errors?.root?.message && (
+            <Alert variant="destructive" className="max-w-md">
+              <AlertCircleIcon />
+              <AlertTitle>Sign Up failed</AlertTitle>
+              <AlertDescription>
+                {form.formState.errors.root.message ||
+                  "Something went wrong. Please try again."}
+              </AlertDescription>
+            </Alert>
+          )}
+
+          <Field className="w-fit">
+            <Button
+              disabled={
+                (form.formState.errors?.root &&
+                  Object.keys(form.formState.errors.root).length !== 0 &&
+                  form.formState.errors.constructor === Object) ||
+                form.formState.isSubmitting
+              }
+              type="submit"
+            >
+              {form.formState.isSubmitting && (
+                <Spinner data-icon="inline-start" />
+              )}
+              Update profile
+            </Button>
+          </Field>
+        </FieldGroup>
+      </form>
+
+      <AvatarUploadModal
+        open={avatarModalOpen}
+        onOpenChange={setAvatarModalOpen}
+        apiEndpoint="/api/upload/avatar"
+        onUploadComplete={(files) => {
+          // Handle post-upload logic
+        }}
+      />
+    </>
+  )
+}
