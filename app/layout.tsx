@@ -1,9 +1,34 @@
-import { Geist, Geist_Mono, IBM_Plex_Sans, Source_Sans_3 } from "next/font/google"
+// import { Analytics } from "@vercel/analytics/next"
+import { Geist_Mono, IBM_Plex_Sans, Source_Sans_3 } from "next/font/google"
 
-import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
-import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/toast"
+import { cn } from "@/lib/utils"
+import "./globals.css"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "TutorHub - Tutoring Marketplace",
+  description: "Connect with expert tutors or share your expertise as a tutor",
+  generator: "Anam",
+  icons: {
+    icon: [
+      {
+        url: "/icon-light-32x32.png",
+        media: "(prefers-color-scheme: light)",
+      },
+      {
+        url: "/icon-dark-32x32.png",
+        media: "(prefers-color-scheme: dark)",
+      },
+      {
+        url: "/icon.svg",
+        type: "image/svg+xml",
+      },
+    ],
+    apple: "/apple-icon.png",
+  },
+}
 
 const sourceSans3Heading = Source_Sans_3({
   subsets: ["latin"],
@@ -40,6 +65,7 @@ export default function RootLayout({
       <body>
         <ThemeProvider>{children}</ThemeProvider>
         <Toaster />
+        {/* {process.env.NODE_ENV === "production" && <Analytics />} */}
       </body>
     </html>
   )

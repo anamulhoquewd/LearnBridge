@@ -58,7 +58,6 @@ export async function POST(req: Request) {
               bio: "",
               hourlyRate: 1000,
               avgRating: 0,
-              totalRatings: 0,
               experience: 2,
             },
           },

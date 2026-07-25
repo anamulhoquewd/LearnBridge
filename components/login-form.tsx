@@ -144,6 +144,7 @@ export function LoginForm({
                       aria-invalid={fieldState.invalid}
                       placeholder="********"
                       autoComplete="off"
+                      type="password"
                     />
 
                     {fieldState.invalid && (
@@ -176,7 +177,9 @@ export function LoginForm({
                   className="w-full"
                   type="submit"
                 >
-                 {form.formState.isSubmitting && <Spinner data-icon="inline-start" />}
+                  {form.formState.isSubmitting && (
+                    <Spinner data-icon="inline-start" />
+                  )}
                   Login
                 </Button>
               </Field>
