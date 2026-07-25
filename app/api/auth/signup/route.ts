@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server"
 import { NextResponse } from "next/server"
 import * as z from "zod"
 
- const signupSchemaZod = z.object({
+const signupSchemaZod = z.object({
   name: z.string().min(2).max(32),
   email: z.email(),
   password: z.string().min(8).max(32),
@@ -15,9 +15,10 @@ export async function POST(req: Request) {
     const body = await req.json()
     const validatedData = signupSchemaZod.safeParse(body)
 
+
     if (!validatedData.success) {
       return NextResponse.json(
-        { error: validatedData.error.flatten() },
+        { success: false, error: validatedData.error },
         { status: 400 }
       )
     }
@@ -35,7 +36,11 @@ export async function POST(req: Request) {
 
     if (authError || !authData) {
       return NextResponse.json(
-        { error: authError?.message || "SignUp failed!" },
+        {
+          success: false,
+          error: authError?.message || "SignUp failed!",
+          code: authError?.code || "UNKNOWN_ERROR",
+        },
         { status: 400 }
       )
     }
@@ -48,15 +53,31 @@ export async function POST(req: Request) {
         email,
         role,
         ...(role === "TUTOR" && {
-            tutorProfile: {create: {
-                bio: "", hourlyRate: 1000, avgRating: 0, totalRatings: 0,  experience:2
-            }}
-        })
+          tutorProfile: {
+            create: {
+              bio: "",
+              hourlyRate: 1000,
+              avgRating: 0,
+              totalRatings: 0,
+              experience: 2,
+            },
+          },
+        }),
       },
     })
 
-    return NextResponse.json({ message: "User created successfully", data: {id: authData.user?.id, email: authData.user?.email } }, { status: 201 })
+    return NextResponse.json(
+      {
+        success: true,
+        message: "User created successfully",
+        data: { id: authData.user?.id, email: authData.user?.email },
+      },
+      { status: 201 }
+    )
   } catch (error) {
-    return NextResponse.json({ error: "Invalid request body" }, { status: 400 })
+    return NextResponse.json(
+      { error: "Invalid request body", success: false },
+      { status: 400 }
+    )
   }
 }

@@ -1,39 +1,52 @@
 "use client"
 
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import {
   Field,
+  FieldContent,
   FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
-  FieldContent,
   FieldLegend,
+  FieldSeparator,
   FieldSet,
   FieldTitle,
-  FieldSeparator,
 } from "@/components/ui/field"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-
 import { Input } from "@/components/ui/input"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import api from "@/lib/axios/api"
+import { getFriendlyErrorMessage } from "@/lib/errors"
 import { cn } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
+import axios from "axios"
+import { AlertCircleIcon } from "lucide-react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useEffect } from "react"
 import { Controller, useForm } from "react-hook-form"
 import * as z from "zod"
-import Link from "next/link"
+import { toast } from "./ui/toast"
 
 export function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const formSchemaZod = z.object({
-    name: z.string().min(2).max(32),
-    email: z.email(),
-    password: z.string().min(8).max(32),
-    confirmPassword: z.email(),
-    role: z.enum(["TUTOR", "STUDENT"]),
-  })
+  const router = useRouter()
+  const formSchemaZod = z
+    .object({
+      name: z.string().min(2).max(32),
+      email: z.email(),
+      password: z.string().min(8).max(32),
+      confirmPassword: z.string().min(8).max(32),
+      role: z.enum(["TUTOR", "STUDENT"]),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: "Passwords do not match",
+      path: ["confirmPassword"],
+    })
 
   const form = useForm<z.infer<typeof formSchemaZod>>({
     resolver: zodResolver(formSchemaZod),
@@ -45,11 +58,63 @@ export function SignupForm({
     },
   })
 
+  const handleSubmit = async (data: z.infer<typeof formSchemaZod>) => {
+    try {
+      const response = await toast.promise(api.post("/auth/signup", data), {
+        loading: "Creating your account…",
+        success: "Account created successfully!",
+        error: (err) => {
+          if (axios.isAxiosError(err)) {
+            const code = err.response?.data?.code
+            const rawMessage = err.response?.data?.error || "Signup failed"
+            return getFriendlyErrorMessage(code, rawMessage)
+          }
+          return "Something went wrong. Please try again."
+        },
+      })
+
+      if (!response.data.success) {
+        throw new Error(response.data.error || "Signup failed!")
+      }
+
+      router.push("/login")
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const code = error.response?.data?.code
+        const rawMessage = error.response?.data?.error || "Signup failed"
+        const friendlyMessage = getFriendlyErrorMessage(code, rawMessage)
+        form.setError("root", { type: "manual", message: friendlyMessage })
+      } else {
+        form.setError("root", {
+          type: "manual",
+          message: "Something went wrong. Please try again.",
+        })
+      }
+    }
+  }
+
+  const onSubmit = async (data: z.infer<typeof formSchemaZod>) => {
+    await handleSubmit(data)
+  }
+
+  useEffect(() => {
+    const subscription = form.watch(() => {
+      if (form.formState.errors.root) {
+        form.clearErrors("root")
+      }
+    })
+    return () => subscription.unsubscribe()
+  }, [form, form.formState.errors.root])
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
-          <form className="p-6 md:p-8">
+          <form
+            id="sign-up-form"
+            className="p-6 md:p-8"
+            onSubmit={form.handleSubmit(onSubmit)}
+          >
             <FieldGroup>
               <div className="flex flex-col items-center gap-2 text-center">
                 <h1 className="text-2xl font-bold">Create your account</h1>
@@ -113,6 +178,7 @@ export function SignupForm({
                         aria-invalid={fieldState.invalid}
                         placeholder="********"
                         autoComplete="off"
+                        type="password"
                       />
                       <FieldDescription>
                         Must be at least 8 characters long.
@@ -137,6 +203,7 @@ export function SignupForm({
                         aria-invalid={fieldState.invalid}
                         placeholder="********"
                         autoComplete="off"
+                        type="password"
                       />
                       <FieldDescription>
                         Must match the password entered above.
@@ -208,8 +275,29 @@ export function SignupForm({
                 )}
               />
 
+              {/* root error message */}
+              {form.formState.errors?.root?.message && (
+                <Alert variant="destructive" className="max-w-md">
+                  <AlertCircleIcon />
+                  <AlertTitle>Sign Up failed</AlertTitle>
+                  <AlertDescription>
+                    {form.formState.errors.root.message ||
+                      "Something went wrong. Please try again."}
+                  </AlertDescription>
+                </Alert>
+              )}
+
               <Field>
-                <Button type="submit">Create Account</Button>
+                <Button
+                  disabled={
+                    form.formState.errors?.root &&
+                    Object.keys(form.formState.errors.root).length !== 0 &&
+                    form.formState.errors.constructor === Object
+                  }
+                  type="submit"
+                >
+                  Create Account
+                </Button>
               </Field>
               <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
                 Or continue with

@@ -1,7 +1,9 @@
 "use client"
 
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { Spinner } from "@/components/ui/spinner"
 import {
   Field,
   FieldDescription,
@@ -11,16 +13,25 @@ import {
   FieldSeparator,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { toast } from "@/components/ui/toast"
+import { getFriendlyErrorMessage } from "@/lib/errors"
+import { createClient } from "@/lib/supabase/client"
 import { cn } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { AlertCircleIcon } from "lucide-react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Controller, useForm } from "react-hook-form"
 import * as z from "zod"
+import { useEffect } from "react"
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const router = useRouter()
+  const supabase = createClient()
+
   const formSchemaZod = z.object({
     email: z.email(),
     password: z.string().min(8).max(32),
@@ -33,11 +44,56 @@ export function LoginForm({
       password: "",
     },
   })
+
+  async function signIn(email: string, password: string) {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+    if (error) throw error // If an error occurs, the promise will be rejected—however, both `toast.promise` and the `catch` block will be triggered.
+    return data
+  }
+
+  const handleSubmit = async (data: z.infer<typeof formSchemaZod>) => {
+    try {
+      const authData = await toast.promise(signIn(data.email, data.password), {
+        loading: "Logging in…",
+        success: "Logged in successfully!",
+        error: (err) =>
+          getFriendlyErrorMessage(err?.code, err?.message || "Login failed"),
+      })
+
+      const role = authData.user?.user_metadata?.role
+      router.push(role === "TUTOR" ? "/tutor" : "/student")
+      router.refresh() // Essential for picking up a new session in server components.
+    } catch (error: any) {
+      const friendlyMessage = getFriendlyErrorMessage(
+        error?.code,
+        error?.message || "Login failed"
+      )
+      form.setError("root", { type: "manual", message: friendlyMessage })
+    }
+  }
+
+  const onSubmit = async (data: z.infer<typeof formSchemaZod>) => {
+    await handleSubmit(data)
+  }
+
+  useEffect(() => {
+    const subscription = form.watch(() => {
+      if (form.formState.errors.root) {
+        form.clearErrors("root")
+      }
+    })
+    return () => subscription.unsubscribe()
+  }, [form, form.formState.errors.root])
+
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
-          <form className="p-6 md:p-8" onSubmit={form.handleSubmit((data) => console.log(data))}>
+          <form className="p-6 md:p-8" onSubmit={form.handleSubmit(onSubmit)}>
             <FieldGroup>
               <div className="flex flex-col items-center gap-2 text-center">
                 <h1 className="text-2xl font-bold">Welcome back</h1>
@@ -97,8 +153,32 @@ export function LoginForm({
                 )}
               />
 
+              {/* root error message */}
+              {form.formState.errors?.root?.message && (
+                <Alert variant="destructive" className="max-w-md">
+                  <AlertCircleIcon />
+                  <AlertTitle>Sign Up failed</AlertTitle>
+                  <AlertDescription>
+                    {form.formState.errors.root.message ||
+                      "Something went wrong. Please try again."}
+                  </AlertDescription>
+                </Alert>
+              )}
+
               <Field>
-                <Button type="submit">Login</Button>
+                <Button
+                  disabled={
+                    (form.formState.errors?.root &&
+                      Object.keys(form.formState.errors.root).length !== 0 &&
+                      form.formState.errors.constructor === Object) ||
+                    form.formState.isSubmitting
+                  }
+                  className="w-full"
+                  type="submit"
+                >
+                 {form.formState.isSubmitting && <Spinner data-icon="inline-start" />}
+                  Login
+                </Button>
               </Field>
               <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
                 Or continue with
