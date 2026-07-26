@@ -13,22 +13,31 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
+} from "@/components/ui/input-group"
 import { Label } from "@/components/ui/label"
 import { Spinner } from "@/components/ui/spinner"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "@/components/ui/toast"
 import api from "@/lib/axios/api"
 import { SUBJECT_OPTIONS } from "@/lib/constant"
-import { getFriendlyErrorMessage } from "@/lib/errors"
 import { TutorProfileFormValues, tutorProfileSchema } from "@/lib/zod/schemas"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { AlertCircleIcon, BadgeCheck, CloudUpload } from "lucide-react"
-import { useState } from "react"
-import { Controller, useForm } from "react-hook-form"
+import { useEffect, useState } from "react"
+import { Controller, SubmitHandler, useForm } from "react-hook-form"
+import { Skeleton } from "./ui/skeleton"
 
 export function ProfileForm() {
+  const [profile, setProfile] = useState()
+  const [loading, setLoading] = useState<boolean>(false)
+
   const [avatarModalOpen, setAvatarModalOpen] = useState(false)
-  const [subjects, setSubjects] = useState<string[]>([])
+
   const form = useForm<TutorProfileFormValues>({
     resolver: zodResolver(tutorProfileSchema),
     defaultValues: {
@@ -41,64 +50,107 @@ export function ProfileForm() {
     },
   })
 
+  console.log("Form valuse: ", form.getValues())
+
   const handleSubmit = async (data: TutorProfileFormValues) => {
     try {
-      const response = await toast.promise(api.post("/upload", data), {
-        loading: "Logging in…",
-        success: "Logged in successfully!",
-        error: (err) =>
-          getFriendlyErrorMessage(err?.code, err?.message || "Login failed"),
+      const response = await toast.promise(api.put("/tutor-profile", data), {
+        loading: "Updating...",
+        success: "Profile updated successfully!",
+        error: (err) => err?.message || "Update failed",
       })
+
+      console.log("res: ", response.data)
     } catch (error: any) {
-      const friendlyMessage = getFriendlyErrorMessage(
-        error?.code,
-        error?.message || "Login failed"
-      )
-      form.setError("root", { type: "manual", message: friendlyMessage })
+      throw error
     }
   }
 
-  const onSubmit = async (data: TutorProfileFormValues) => {
+  const onSubmit: SubmitHandler<TutorProfileFormValues> = async (
+    data: TutorProfileFormValues
+  ) => {
     await handleSubmit(data)
   }
 
-  const toggleSubject = (subject: string) => {
-    setSubjects((prev) =>
-      prev.includes(subject)
-        ? prev.filter((s) => s !== subject)
-        : [...prev, subject]
-    )
+  const fetchProfile = async () => {
+    setLoading(true)
+    try {
+      const response = await api.get("/tutor-profile")
+
+      toast.add({
+        type: "success",
+        description: response.data?.message || "Event has been created.",
+      })
+
+      if (response.data.success) {
+        const p = {
+          ...response.data.data.tutorProfile,
+          name: response.data.data.name,
+          email: response.data.data.email,
+          avatar: response.data.data.avatar,
+        }
+
+        setProfile(p)
+        form.reset(p)
+      }
+
+      console.log("Profile fetch successfully!")
+    } catch (error: any) {
+      toast.add({
+        type: "error",
+        description: "The profile not fetching failed.",
+        priority: "high",
+      })
+    } finally {
+      setLoading(false)
+    }
   }
 
-  console.log("Subjects: ", subjects)
+  useEffect(() => {
+    fetchProfile()
+  }, [])
 
   return (
     <>
-      <form className="" onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
         <FieldGroup className="gap-4">
           <div className="relative flex flex-col items-center gap-2 text-center">
-            <Avatar className="h-28 w-28 grayscale">
-              <AvatarImage
-                src="https://i.pravatar.cc/150?img=10"
-                alt="@pranathip"
-              />
-              <AvatarFallback>PP</AvatarFallback>
-              <Button
-                onClick={(e) => {
-                  e.stopPropagation()
-                  setAvatarModalOpen(true)
-                }}
-                size={"icon-sm"}
-                className="absolute right-0 bottom-0 z-10 rounded-full"
-              >
-                <CloudUpload className="pointer-events-none h-5 w-5 cursor-pointer" />
-              </Button>
-            </Avatar>
-            <div className="flex flex-col items-center">
-              <Label className="text-xl">Anamul Hoque</Label>
-              <p className="text-sm text-muted-foreground">
-                Software developer
-              </p>
+            {loading ? (
+              <Skeleton className="h-28 w-28 rounded-full" />
+            ) : (
+              <Avatar className="h-28 w-28 grayscale">
+                <AvatarImage
+                  src={profile?.avatar || "https://i.pravatar.cc/150?img=10"}
+                  alt={profile?.name || "@pranathip"}
+                />
+                <AvatarFallback>XX</AvatarFallback>
+                <Button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setAvatarModalOpen(true)
+                  }}
+                  size={"icon-sm"}
+                  className="absolute right-0 bottom-0 z-10 rounded-full"
+                >
+                  <CloudUpload className="pointer-events-none h-5 w-5 cursor-pointer" />
+                </Button>
+              </Avatar>
+            )}
+
+            <div className="flex flex-col items-center gap-2">
+              {loading ? (
+                <>
+                  <Skeleton className="h-6 w-40" />
+                  <Skeleton className="h-4 w-28" />
+                </>
+              ) : (
+                <>
+                  <Label className="text-xl">{profile?.name}</Label>
+                  <p className="line-clamp-1 truncate text-sm text-muted-foreground">
+                    {profile?.bio}
+                  </p>
+                </>
+              )}
             </div>
             <Badge
               className="absolute top-0 right-0 bg-sky-50 text-sky-700 dark:bg-sky-950 dark:text-sky-300"
@@ -114,14 +166,18 @@ export function ProfileForm() {
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor={field.name}>Email</FieldLabel>
-                <Input
-                  {...field}
-                  id={field.name}
-                  aria-invalid={fieldState.invalid}
-                  placeholder="anam@gmail.com"
-                  autoComplete="off"
-                  disabled
-                />
+                {loading ? (
+                  <Skeleton className="h-10 w-full rounded-md" />
+                ) : (
+                  <Input
+                    {...field}
+                    id={field.name}
+                    aria-invalid={fieldState.invalid}
+                    placeholder="anamulhoquewd@gmail.com"
+                    autoComplete="off"
+                    disabled
+                  />
+                )}
                 <FieldDescription>
                   This field is currently disabled.
                 </FieldDescription>
@@ -138,14 +194,17 @@ export function ProfileForm() {
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor={field.name}>Name</FieldLabel>
-
-                <Input
-                  {...field}
-                  id={field.name}
-                  aria-invalid={fieldState.invalid}
-                  placeholder="Anamul Hoque"
-                  autoComplete="off"
-                />
+                {loading ? (
+                  <Skeleton className="h-10 w-full rounded-md" />
+                ) : (
+                  <Input
+                    {...field}
+                    id={field.name}
+                    aria-invalid={fieldState.invalid}
+                    placeholder="Anamul Hoque"
+                    autoComplete="off"
+                  />
+                )}
 
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
@@ -160,13 +219,17 @@ export function ProfileForm() {
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor={field.name}>Bio</FieldLabel>
-                <Textarea
-                  {...field}
-                  id={field.name}
-                  aria-invalid={fieldState.invalid}
-                  placeholder="Hi, this is Anam, a Softwere developer"
-                  autoComplete="off"
-                />
+                {loading ? (
+                  <Skeleton className="h-10 w-full rounded-md" />
+                ) : (
+                  <Textarea
+                    {...field}
+                    id={field.name}
+                    aria-invalid={fieldState.invalid}
+                    placeholder="Hi, this is Anam, a Softwere developer"
+                    autoComplete="off"
+                  />
+                )}
 
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
@@ -182,14 +245,26 @@ export function ProfileForm() {
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel htmlFor={field.name}>Hourly rate</FieldLabel>
-
-                  <Input
-                    {...field}
-                    id={field.name}
-                    aria-invalid={fieldState.invalid}
-                    placeholder="How much do you want to charge per hour for your services?"
-                    autoComplete="off"
-                  />
+                  {loading ? (
+                    <Skeleton className="h-10 w-full rounded-md" />
+                  ) : (
+                    <InputGroup>
+                      <InputGroupAddon>
+                        <InputGroupText>$</InputGroupText>
+                      </InputGroupAddon>
+                      <InputGroupInput
+                        {...field}
+                        id={field.name}
+                        aria-invalid={fieldState.invalid}
+                        placeholder="How much do you want to charge per hour for your services?"
+                        autoComplete="off"
+                        type="number"
+                      />
+                      <InputGroupAddon align="inline-end">
+                        <InputGroupText>USD</InputGroupText>
+                      </InputGroupAddon>
+                    </InputGroup>
+                  )}
 
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
@@ -205,14 +280,23 @@ export function ProfileForm() {
                   <FieldLabel htmlFor={field.name}>
                     Years of Experience
                   </FieldLabel>
-
-                  <Input
-                    {...field}
-                    id={field.name}
-                    aria-invalid={fieldState.invalid}
-                    placeholder="How many years of experience do you have in the service you want to offer?"
-                    autoComplete="off"
-                  />
+                  {loading ? (
+                    <Skeleton className="h-10 w-full rounded-md" />
+                  ) : (
+                    <InputGroup>
+                      <InputGroupInput
+                        {...field}
+                        id={field.name}
+                        aria-invalid={fieldState.invalid}
+                        placeholder="How many years of experience do you have in the service you want to offer?"
+                        autoComplete="off"
+                        type="number"
+                      />
+                      <InputGroupAddon align="inline-end">
+                        <InputGroupText>years</InputGroupText>
+                      </InputGroupAddon>
+                    </InputGroup>
+                  )}
 
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
@@ -227,29 +311,37 @@ export function ProfileForm() {
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor={field.name}>Subjects you teach</FieldLabel>
+                <FieldLabel>Subjects you teach</FieldLabel>
 
                 <div className="flex flex-wrap gap-2">
                   {SUBJECT_OPTIONS.map((subject) => (
                     <Button
-                      size={"sm"}
+                      type="button"
+                      size="sm"
                       key={subject}
-                      onClick={() => toggleSubject(subject)}
                       variant={
-                        subjects?.includes(subject) ? "default" : "secondary"
+                        field.value?.includes(subject) ? "default" : "secondary"
                       }
+                      onClick={() => {
+                        const selectedSubjects = field.value ?? []
+                        field.onChange(
+                          selectedSubjects.includes(subject)
+                            ? selectedSubjects.filter((s) => s !== subject)
+                            : [...selectedSubjects, subject]
+                        )
+                      }}
                     >
                       {subject}
                     </Button>
                   ))}
                 </div>
+
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Selected: {subjects.length > 0 ? subjects.join(", ") : "None"}
+                  Selected:{" "}
+                  {field.value.length > 0 ? field.value.join(", ") : "None"}
                 </p>
 
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
+                {fieldState.error && <FieldError errors={[fieldState.error]} />}
               </Field>
             )}
           />
@@ -288,9 +380,9 @@ export function ProfileForm() {
       <AvatarUploadModal
         open={avatarModalOpen}
         onOpenChange={setAvatarModalOpen}
-        apiEndpoint="/api/upload/avatar"
-        onUploadComplete={(files) => {
-          // Handle post-upload logic
+        apiEndpoint="/uploads"
+        onUploadComplete={({ files, data }) => {
+          console.log("Response of upload: ", data, files)
         }}
       />
     </>

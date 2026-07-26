@@ -39,9 +39,7 @@ export async function proxy(request: NextRequest) {
   }
 
   // if the user is not logged in and they are trying to access a protected route, redirect them to the login page
-  const isProtectedRoute =
-    request.nextUrl.pathname.startsWith("/student") ||
-    request.nextUrl.pathname.startsWith("/tutor")
+  const isProtectedRoute = request.nextUrl.pathname.startsWith("/dashboard")
 
   if (!user && isProtectedRoute) {
     return NextResponse.redirect(new URL("/login", request.url))
@@ -51,5 +49,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/student/:path*", "/tutor/:path*", "/login", "/signup"],
+  matcher: ["/dashboard/:path*", "/login", "/signup"],
 }

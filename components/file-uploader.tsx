@@ -63,22 +63,22 @@ export function FileUploader({
   };
 
   const handleUpload = async () => {
-    if (selectedFiles.length === 0) return;
+    if (selectedFiles.length === 0) return
 
     try {
-      await onUpload(selectedFiles);
+      await onUpload(selectedFiles)
       // Clear files after successful upload
-      previews.forEach((p) => URL.revokeObjectURL(p.url));
-      setSelectedFiles([]);
-      setPreviews([]);
+      previews.forEach((p) => URL.revokeObjectURL(p.url))
+      setSelectedFiles([])
+      setPreviews([])
       if (fileInputRef.current) {
-        fileInputRef.current.value = '';
+        fileInputRef.current.value = ""
       }
     } catch (error) {
-      console.error('Upload error:', error);
+      console.error("Upload error:", error)
       // Error handling in parent component
     }
-  };
+  }
 
   return (
     <div className="w-full space-y-4">
@@ -87,13 +87,13 @@ export function FileUploader({
         onDragOver={handleDragOver}
         onDrop={handleDrop}
         onClick={() => fileInputRef.current?.click()}
-        className="border-2 border-dashed border-muted-foreground/30 rounded-lg p-8 cursor-pointer transition-colors hover:border-muted-foreground/50 bg-muted/30"
+        className="cursor-pointer rounded-lg border-2 border-dashed border-muted-foreground/30 bg-muted/30 p-8 transition-colors hover:border-muted-foreground/50"
       >
         <input
           ref={fileInputRef}
           type="file"
           multiple={config.maxFiles > 1}
-          accept={config.allowedTypes.join(',')}
+          accept={config.allowedTypes.join(",")}
           onChange={(e) => handleFileSelect(e.target.files)}
           className="hidden"
         />
@@ -101,13 +101,19 @@ export function FileUploader({
         <div className="flex flex-col items-center gap-2 text-center">
           <CloudUpload className="h-8 w-8 text-muted-foreground" />
           <div>
-            <p className="font-medium text-foreground">Drag & drop files here</p>
+            <p className="font-medium text-foreground">
+              Drag & drop files here
+            </p>
             <p className="text-sm text-muted-foreground">
-              Or click to browse (max {config.maxFiles} file{config.maxFiles > 1 ? 's' : ''}, up to {formatFileSize(config.maxFileSize)} each)
+              Or click to browse (max {config.maxFiles} file
+              {config.maxFiles > 1 ? "s" : ""}, up to{" "}
+              {formatFileSize(config.maxFileSize)} each)
             </p>
           </div>
           {allowedTypesLabel && (
-            <p className="text-xs text-muted-foreground mt-2">{allowedTypesLabel}</p>
+            <p className="mt-2 text-xs text-muted-foreground">
+              {allowedTypesLabel}
+            </p>
           )}
           <Button type="button" variant="outline" size="sm" className="mt-2">
             Browse files
@@ -118,24 +124,27 @@ export function FileUploader({
       {/* File Previews */}
       {previews.length > 0 && (
         <div className="space-y-3">
-          <p className="text-sm font-medium">Selected files ({previews.length})</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+          <p className="text-sm font-medium">
+            Selected files ({previews.length})
+          </p>
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
             {previews.map((preview, index) => (
               <div
                 key={index}
-                className="relative bg-muted rounded-lg overflow-hidden border border-muted-foreground/20"
+                className="relative overflow-hidden rounded-lg border border-muted-foreground/20 bg-muted"
               >
-                {preview.file.type.startsWith('image/') ? (
+                {preview.file.type.startsWith("image/") ? (
                   <Image
                     src={preview.url}
                     alt={preview.file.name}
-                    className="object-cover"
-                    width={1000} height={1000}
+                    className="h-fit w-full object-cover"
+                    width={1000}
+                    height={1000}
                   />
                 ) : (
-                  <div className="w-full h-32 flex items-center justify-center bg-muted-foreground/10">
+                  <div className="flex h-32 w-full items-center justify-center bg-muted-foreground/10">
                     <div className="text-center">
-                      <p className="text-xs text-muted-foreground truncate px-2">
+                      <p className="truncate px-2 text-xs text-muted-foreground">
                         {preview.file.name}
                       </p>
                       <p className="text-xs text-muted-foreground">
@@ -146,10 +155,10 @@ export function FileUploader({
                 )}
                 <button
                   onClick={() => removeFile(index)}
-                  className="absolute top-1 right-1 bg-destructive/80 hover:bg-destructive p-1 rounded"
+                  className="absolute top-1 right-1 rounded bg-destructive/80 p-1 hover:bg-destructive"
                   type="button"
                 >
-                  <X className="h-4 w-4 text-destructive-foreground" />
+                  <X className="text-destructive-foreground h-4 w-4" />
                 </button>
               </div>
             ))}
@@ -159,14 +168,10 @@ export function FileUploader({
 
       {/* Upload Button */}
       {previews.length > 0 && (
-        <Button
-          onClick={handleUpload}
-          disabled={isLoading}
-          className="w-full"
-        >
-          {isLoading ? 'Uploading...' : 'Upload'}
+        <Button onClick={handleUpload} disabled={isLoading} className="w-full">
+          {isLoading ? "Uploading..." : "Upload"}
         </Button>
       )}
     </div>
-  );
+  )
 }
