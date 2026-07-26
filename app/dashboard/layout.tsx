@@ -16,7 +16,7 @@ export default async function DashboardLayout({
       <AppSidebar />
       <SidebarInset>
         <HeaderComponent />
-          <main className="flex-1 flex-col p-4 overflow-auto m-auto">
+          <main className="flex-1 flex-col p-4 overflow-auto">
             <Suspense>{children}</Suspense>
           </main>
       </SidebarInset>

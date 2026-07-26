@@ -146,7 +146,7 @@ export function ProfileForm() {
               ) : (
                 <>
                   <Label className="text-xl">{profile?.name}</Label>
-                  <p className="line-clamp-1 truncate text-sm text-muted-foreground">
+                  <p className="line-clamp-1 text-sm text-muted-foreground">
                     {profile?.bio}
                   </p>
                 </>

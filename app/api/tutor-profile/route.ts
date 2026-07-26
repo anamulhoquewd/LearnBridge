@@ -13,12 +13,12 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   try {
-    const profile = await prisma.profile.findUnique({
+    const profile = await prisma.tutorProfile.findUnique({
       where: {
         id: user.id,
       },
       include: {
-        tutorProfile: true,
+        user: { select: { name: true, avatar: true, email: true } },
       },
     })
 
@@ -28,9 +28,8 @@ export async function GET() {
       success: true,
     })
   } catch (err) {
-    console.error("Profile fetchng error:", err)
     return NextResponse.json(
-      { error: "Profile fetching failed", success: false },
+      { error: "Someting went wrong", success: false },
       { status: 500 }
     )
   }
@@ -77,9 +76,8 @@ export async function PUT(req: Request) {
       success: true,
     })
   } catch (err) {
-    console.error("Profile fetchng error:", err)
     return NextResponse.json(
-      { error: "Profile fetching failed", success: false },
+      { error: "Someting went wrong", success: false },
       { status: 500 }
     )
   }

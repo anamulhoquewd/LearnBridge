@@ -37,7 +37,7 @@ export default function SettingsLayout({
 }) {
   return (
     <>
-      <div className="mb-8 space-y-1">
+      <div className="m-auto mb-8 space-y-1">
         <h2 className="text-2xl font-bold tracking-tight">Settings</h2>
         <p className="max-w-2/3 text-muted-foreground">
           Configure your system preferences, manage team permissions, set up
