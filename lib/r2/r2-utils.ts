@@ -5,7 +5,7 @@ import {
 } from "@aws-sdk/client-s3"
 import { r2 } from "./config"
 
-const R2_BUCKET = process.env.R2_BUCKET || "tutor-platform"
+const R2_BUCKET = process.env.R2_BUCKET || "LearnBridge"
 const R2_PUBLIC_URL = process.env.R2_PUBLIC_URL
 
 console.log("bucket: ", R2_BUCKET)
@@ -18,7 +18,7 @@ export async function fileToBuffer(file: File) {
 
 export async function uploadSingleFile(
   file: File,
-  folder: string | undefined = "tutor-marketplace"
+  folder: string | undefined = "learn-bridge"
 ) {
   try {
     if (!file) {
@@ -31,7 +31,7 @@ export async function uploadSingleFile(
       return { error: { message: "Failed to process file buffer" } }
     }
 
-    const fileName = `tutor-${new Date().getTime().toString()}.webp`
+    const fileName = `learn-ridge-${new Date().getTime().toString()}.webp`
     const key = `${folder}/${fileName}`
 
     const command = new PutObjectCommand({

@@ -2,19 +2,27 @@ import { createServerClient } from "@supabase/ssr"
 import { NextResponse, type NextRequest } from "next/server"
 
 export async function proxy(request: NextRequest) {
-  let response = NextResponse.next({ request })
+  let response = NextResponse.next({
+    request,
+  })
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll: () => request.cookies.getAll(),
-        setAll: (cookiesToSet) => {
+        getAll() {
+          return request.cookies.getAll()
+        },
+        setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value)
           )
-          response = NextResponse.next({ request })
+
+          response = NextResponse.next({
+            request,
+          })
+
           cookiesToSet.forEach(({ name, value, options }) =>
             response.cookies.set(name, value, options)
           )
@@ -27,19 +35,16 @@ export async function proxy(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  console.log("User 0:", user)
+  const pathname = request.nextUrl.pathname
 
-  // if user logged in and they are trying to access the login page, redirect them to the home page
-  if (
-    user &&
-    (request.nextUrl.pathname === "/login" ||
-      request.nextUrl.pathname === "/signup")
-  ) {
+  // Prevent logged-in users from visiting auth pages
+  if (user && (pathname === "/login" || pathname === "/signup")) {
     return NextResponse.redirect(new URL("/", request.url))
   }
 
-  // if the user is not logged in and they are trying to access a protected route, redirect them to the login page
-  const isProtectedRoute = request.nextUrl.pathname.startsWith("/dashboard")
+  // Protect dashboard routes
+  const isProtectedRoute =
+    pathname.startsWith("/t/dashboard") || pathname.startsWith("/s/dashboard")
 
   if (!user && isProtectedRoute) {
     return NextResponse.redirect(new URL("/login", request.url))
@@ -49,5 +54,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/login", "/signup"],
+  matcher: ["/login", "/signup", "/t/dashboard/:path*", "/s/dashboard/:path*"],
 }

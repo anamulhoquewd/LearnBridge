@@ -66,9 +66,7 @@ export default function Page() {
                   Find experienced tutors in your subject, schedule sessions at
                   your convenience, and improve your skills.
                 </p>
-                <Link href="/student">
                   <Button className="w-full">Get Started as Student</Button>
-                </Link>
               </CardContent>
             </Card>
 

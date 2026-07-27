@@ -1,14 +1,14 @@
 "use client"
 
-import { Tutor } from "@/app/dashboard/tutors/page"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { BadgeCheck, Star } from "lucide-react"
+import { Tutor } from "@/interfaces"
+import { Star } from "lucide-react"
 import VerifiedBadge from "./verified-badge"
 
-export  interface TutorGridCardProps extends Tutor {
+export interface TutorGridCardProps extends Tutor {
   onViewProfile: (id: string) => void
 }
 
@@ -36,10 +36,7 @@ export function TutorGridCard({
         <div className="flex items-start gap-4">
           <div className="space-y-2">
             <Avatar className="size-16">
-              <AvatarImage
-                src={avatar || "https://i.pravatar.cc/150?img=10"}
-                alt={name}
-              />
+              <AvatarImage src={avatar || ""} alt={name} />
               <AvatarFallback>{getInitials(name)}</AvatarFallback>
             </Avatar>
             {avgRating > 0 && (
@@ -81,8 +78,7 @@ export function TutorGridCard({
           <Button>Book Now</Button>
         </div>
       </CardContent>
-
-        <VerifiedBadge />
+      <VerifiedBadge className="top-1/30 right-1/30" />
     </Card>
   )
 }

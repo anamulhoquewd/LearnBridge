@@ -14,7 +14,7 @@ export function generateMeta({
   description: string
 }): Metadata {
   return {
-    title: `${title} — Tutor Platform`,
+    title: `${title} — Learn Bridge`,
     description: description,
     openGraph: {
       images: [`/seo.jpg`],

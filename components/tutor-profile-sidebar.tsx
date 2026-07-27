@@ -1,9 +1,9 @@
-'use client';
+"use client"
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Mail, Phone, MapPin, Globe, BookOpen, Award } from 'lucide-react';
-import { Tutor } from "@/app/dashboard/tutors/page"
+import { Badge } from "@/components/ui/badge"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Tutor } from "@/interfaces"
+import { Award, BookOpen, Globe, Mail, MapPin, Phone } from "lucide-react"
 
 export function TutorProfileSidebar({ tutor }: { tutor: Tutor }) {
   // Sample data - replace with API data

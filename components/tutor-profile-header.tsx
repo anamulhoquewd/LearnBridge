@@ -1,9 +1,8 @@
-import { Tutor } from "@/app/dashboard/tutors/page"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { CheckCircle, Clock, Star, Users } from "lucide-react"
+import { Tutor } from "@/interfaces"
+import { Clock, Star, Users } from "lucide-react"
 import VerifiedBadge from "./verified-badge"
 
 export function TutorProfileHeader({ tutor }: { tutor: Tutor }) {

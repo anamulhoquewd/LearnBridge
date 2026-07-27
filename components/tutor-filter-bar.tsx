@@ -49,11 +49,14 @@ export function TutorFilterBar({
     onSubjectsChange(updated)
   }
 
+  const isGrid = currentView === "grid"
+
   return (
-    <div className="space-y-4">
+    <div className="w-full space-y-4">
       {/* Top Filter Row */}
-      <div className="flex items-center gap-3">
-        <div className="relative flex-1">
+      <div className="flex flex-col items-end gap-3">
+        {/* Search */}
+        <div className="relative w-full flex-1">
           <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Search tutors..."
@@ -62,60 +65,57 @@ export function TutorFilterBar({
             className="pl-10"
           />
         </div>
+        <div className="flex items-center justify-end gap-2">
+          {/* Subject Filter Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger className="inline-flex h-7 items-center justify-center gap-1.5 rounded-lg border border-border bg-background px-2.5 text-sm font-medium hover:bg-muted">
+              <Filter className="size-4" />
+              Subjects
+              {currentSubjects.length > 0 && (
+                <span className="inline-flex size-5 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground">
+                  {currentSubjects.length}
+                </span>
+              )}
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuGroup>
+                <DropdownMenuLabel>Select Subjects</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <div className="max-h-64 overflow-y-auto">
+                  {SUBJECT_OPTIONS.map((subject) => (
+                    <DropdownMenuCheckboxItem
+                      key={subject}
+                      checked={currentSubjects.includes(subject)}
+                      onCheckedChange={() => handleSubjectToggle(subject)}
+                    >
+                      {subject}
+                    </DropdownMenuCheckboxItem>
+                  ))}
+                </div>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
-        {/* Subject Filter Dropdown */}
-        <DropdownMenu>
-          <DropdownMenuTrigger className="inline-flex h-7 items-center justify-center gap-1.5 rounded-lg border border-border bg-background px-2.5 text-sm font-medium hover:bg-muted">
-            <Filter className="size-4" />
-            Subjects
-            {currentSubjects.length > 0 && (
-              <span className="inline-flex size-5 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground">
-                {currentSubjects.length}
-              </span>
-            )}
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuGroup>
-              <DropdownMenuLabel>Select Subjects</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <div className="max-h-64 overflow-y-auto">
-                {SUBJECT_OPTIONS.map((subject) => (
-                  <DropdownMenuCheckboxItem
-                    key={subject}
-                    checked={currentSubjects.includes(subject)}
-                    onCheckedChange={() => handleSubjectToggle(subject)}
-                  >
-                    {subject}
-                  </DropdownMenuCheckboxItem>
-                ))}
-              </div>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-
-        {/* Advanced Filter Button (UI only) */}
-        <Button variant="ghost" size="icon" title="Advanced filters">
-          <Settings2 className="size-4" />
-        </Button>
-
-        {/* View Toggle */}
-        <div className="flex gap-1 rounded-lg border border-border p-1">
-          <Button
-            variant={currentView === "grid" ? "default" : "ghost"}
-            size="sm"
-            onClick={() => onViewChange("grid")}
-            title="Grid view"
-          >
-            <Grid3x3 className="size-4" />
+          {/* Advanced Filter Button (UI only) */}
+          <Button variant="ghost" size="icon" title="Advanced filters">
+            <Settings2 className="size-4" />
           </Button>
-          <Button
-            variant={currentView === "list" ? "default" : "ghost"}
-            size="sm"
-            onClick={() => onViewChange("list")}
-            title="List view"
-          >
-            <List className="size-4" />
-          </Button>
+
+          {/* View Toggle */}
+          <div className="flex gap-1 rounded-lg border border-border p-1">
+            <Button
+              variant={isGrid ? "default" : "ghost"}
+              size="sm"
+              onClick={() => onViewChange(isGrid ? "list" : "grid")}
+              title={isGrid ? "List view" : "Grid view"}
+            >
+              {isGrid ? (
+                <Grid3x3 className="size-4" />
+              ) : (
+                <List className="size-4" />
+              )}
+            </Button>
+          </div>
         </div>
       </div>
 
