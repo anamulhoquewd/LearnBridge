@@ -16,10 +16,8 @@ export default async function TutorProfilePage({
 
   const tutor = await prisma.tutorProfile.findUnique({
     where: { id },
-    include: { user: { select: { name: true, avatar: true } } },
+    include: { user: { select: { name: true, avatar: true, email: true } } },
   })
-
-  console.log("Tutor: ", tutor)
 
   if (!tutor) return notFound()
 
@@ -27,13 +25,13 @@ export default async function TutorProfilePage({
     <div className="min-h-screen bg-background">
       <main className="container mx-auto max-w-6xl px-4 py-8 md:px-6">
         {/* Profile Header */}
-        <TutorProfileHeader tutorId={params.id} />
+        <TutorProfileHeader tutor={tutor} />
 
         {/* Main Content - Two Column Layout */}
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           {/* Left Column - Sidebar */}
           <div className="lg:col-span-1">
-            <TutorProfileSidebar />
+            <TutorProfileSidebar tutor={tutor} />
           </div>
 
           {/* Right Column - Main Content */}

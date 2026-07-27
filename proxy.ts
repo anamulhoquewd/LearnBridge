@@ -27,7 +27,7 @@ export async function proxy(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  console.log("User:", user)
+  console.log("User 0:", user)
 
   // if user logged in and they are trying to access the login page, redirect them to the home page
   if (

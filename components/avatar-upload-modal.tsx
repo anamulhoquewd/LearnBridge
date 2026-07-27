@@ -65,10 +65,8 @@ export function AvatarUploadModal({
         throw new Error(response.data.error)
       }
 
-      const { data, message, success } = response.data
-      console.log("Data: ", data)
+      const { data } = response.data
 
-      // Call callback if provided
       if (onUploadComplete) {
         onUploadComplete({ files, data })
       }

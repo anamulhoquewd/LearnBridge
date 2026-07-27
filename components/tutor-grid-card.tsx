@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { BadgeCheck, Star } from "lucide-react"
+import VerifiedBadge from "./verified-badge"
 
 export  interface TutorGridCardProps extends Tutor {
   onViewProfile: (id: string) => void
@@ -81,13 +82,7 @@ export function TutorGridCard({
         </div>
       </CardContent>
 
-      <Badge
-        className="absolute top-1/30 right-1/20 bg-sky-50 text-sky-700 dark:bg-sky-950 dark:text-sky-300"
-        variant="secondary"
-      >
-        <BadgeCheck data-icon="inline-start" />
-        Verified
-      </Badge>
+        <VerifiedBadge />
     </Card>
   )
 }

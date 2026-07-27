@@ -15,13 +15,12 @@ export async function GET() {
   try {
     const profile = await prisma.tutorProfile.findUnique({
       where: {
-        id: user.id,
+        userId: user.id,
       },
       include: {
         user: { select: { name: true, avatar: true, email: true } },
       },
     })
-
     return NextResponse.json({
       data: profile,
       message: "Profile found successfully!",
@@ -62,16 +61,23 @@ export async function PUT(req: Request) {
       create: { userId: user.id, subjects, hourlyRate, bio, experience },
     })
 
-    // Profile names are managed at the profile table level.
-    if (name) {
-      await prisma.profile.update({
-        where: { id: user.id },
-        data: { name },
-      })
-    }
+    const profile = await prisma.profile.update({
+      where: { id: user.id },
+      data: name ? { name } : {},
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        avatar: true,
+        role: true,
+      },
+    })
 
     return NextResponse.json({
-      data: updated,
+      data: {
+        ...updated,
+        user: profile,
+      },
       message: "Tutor profile updated successfully!",
       success: true,
     })

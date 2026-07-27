@@ -3,19 +3,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Mail, Phone, MapPin, Globe, BookOpen, Award } from 'lucide-react';
+import { Tutor } from "@/app/dashboard/tutors/page"
 
-export function TutorProfileSidebar() {
+export function TutorProfileSidebar({ tutor }: { tutor: Tutor }) {
   // Sample data - replace with API data
-  const tutor = {
-    email: 'sarah.johnson@example.com',
-    phone: '+1 (555) 123-4567',
-    location: 'San Francisco, CA',
-    website: 'https://sarahjohnsontutoring.com',
-    subjects: ['Mathematics', 'Physics', 'Calculus', 'Algebra'],
-    experience: '8+ years',
-    qualifications: ['B.S. Mathematics', 'M.S. Physics', 'Teaching Certification'],
-    bio: 'Passionate educator dedicated to helping students master complex concepts. My approach focuses on breaking down difficult topics into manageable, understandable pieces while maintaining student engagement.',
-  };
+  const qualifications = [
+    "B.S. Mathematics",
+    "M.S. Physics",
+    "Teaching Certification",
+  ]
 
   return (
     <div className="space-y-6">
@@ -26,22 +22,20 @@ export function TutorProfileSidebar() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center gap-3 text-sm">
-            <Mail className="size-4 text-primary shrink-0" />
-            <span className="break-all">{tutor.email}</span>
+            <Mail className="size-4 shrink-0 text-primary" />
+            <span className="break-all">{tutor?.user.email}</span>
           </div>
           <div className="flex items-center gap-3 text-sm">
-            <Phone className="size-4 text-primary shrink-0" />
-            <span>{tutor.phone}</span>
+            <Phone className="size-4 shrink-0 text-primary" />
+            <span>"+1 (555) 123-4567"</span>
           </div>
           <div className="flex items-center gap-3 text-sm">
-            <MapPin className="size-4 text-primary shrink-0" />
-            <span>{tutor.location}</span>
+            <MapPin className="size-4 shrink-0 text-primary" />
+            <span>"San Francisco, CA"</span>
           </div>
           <div className="flex items-center gap-3 text-sm">
-            <Globe className="size-4 text-primary shrink-0" />
-            <a href={tutor.website} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-              Visit Website
-            </a>
+            <Globe className="size-4 shrink-0 text-primary" />
+            Visit Website
           </div>
         </CardContent>
       </Card>
@@ -49,7 +43,7 @@ export function TutorProfileSidebar() {
       {/* Subjects */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-lg">
             <BookOpen className="size-4" />
             Subjects
           </CardTitle>
@@ -71,7 +65,7 @@ export function TutorProfileSidebar() {
           <CardTitle className="text-lg">Experience</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm font-semibold mb-3">{tutor.experience}</p>
+          <p className="mb-3 text-sm font-semibold">{tutor.experience}</p>
           <p className="text-sm text-muted-foreground">{tutor.bio}</p>
         </CardContent>
       </Card>
@@ -79,16 +73,16 @@ export function TutorProfileSidebar() {
       {/* Qualifications */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-lg">
             <Award className="size-4" />
             Qualifications
           </CardTitle>
         </CardHeader>
         <CardContent>
           <ul className="space-y-2">
-            {tutor.qualifications.map((qual) => (
+            {qualifications.map((qual) => (
               <li key={qual} className="flex items-start gap-2 text-sm">
-                <span className="text-primary mt-1">✓</span>
+                <span className="mt-1 text-primary">✓</span>
                 <span>{qual}</span>
               </li>
             ))}
@@ -96,5 +90,5 @@ export function TutorProfileSidebar() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

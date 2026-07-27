@@ -5,6 +5,7 @@ import { TutorGridCard } from "@/components/tutor-grid-card"
 import { TutorListCard } from "@/components/tutor-list-card"
 import { Skeleton } from "@/components/ui/skeleton"
 import api from "@/lib/axios/api"
+import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useDebounce } from "use-debounce"
 
@@ -15,7 +16,8 @@ export interface Tutor {
   bio: string
   avgRating: number
   totalReviews: number
-  user: { name: string; avatar: string | null }
+  experience: number
+  user: { name: string; avatar: string | null; email: string }
 }
 
 export default function TutorsPage() {
@@ -24,6 +26,8 @@ export default function TutorsPage() {
   const [query, setQuery] = useState("")
   const [subjects, setSubjects] = useState<string[]>([])
   const [currentView, setCurrentView] = useState<"grid" | "list">("grid")
+
+  const router = useRouter()
 
   const [debouncedQuery] = useDebounce(query, 500)
 
@@ -51,6 +55,7 @@ export default function TutorsPage() {
   const handleViewProfile = (id: string) => {
     // TODO: Navigate to tutor profile page
     console.log("View profile:", id)
+    router.push(`/dashboard/tutors/${id}`)
   }
 
   useEffect(() => {

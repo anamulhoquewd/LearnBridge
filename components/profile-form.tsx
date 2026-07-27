@@ -1,9 +1,9 @@
 "use client"
 
+import { Tutor } from "@/app/dashboard/tutors/page"
 import { AvatarUploadModal } from "@/components/avatar-upload-modal"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   Field,
@@ -27,13 +27,14 @@ import api from "@/lib/axios/api"
 import { SUBJECT_OPTIONS } from "@/lib/constant"
 import { TutorProfileFormValues, tutorProfileSchema } from "@/lib/zod/schemas"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { AlertCircleIcon, BadgeCheck, CloudUpload } from "lucide-react"
+import { AlertCircleIcon, CloudUpload } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Controller, SubmitHandler, useForm } from "react-hook-form"
 import { Skeleton } from "./ui/skeleton"
+import VerifiedBadge from "./verified-badge"
 
 export function ProfileForm() {
-  const [profile, setProfile] = useState()
+  const [profile, setProfile] = useState<Tutor>()
   const [loading, setLoading] = useState<boolean>(false)
 
   const [avatarModalOpen, setAvatarModalOpen] = useState(false)
@@ -50,8 +51,6 @@ export function ProfileForm() {
     },
   })
 
-  console.log("Form valuse: ", form.getValues())
-
   const handleSubmit = async (data: TutorProfileFormValues) => {
     try {
       const response = await toast.promise(api.put("/tutor-profile", data), {
@@ -60,7 +59,14 @@ export function ProfileForm() {
         error: (err) => err?.message || "Update failed",
       })
 
-      console.log("res: ", response.data)
+      if (response.data.success) {
+        setProfile(response.data.data)
+        form.reset({
+          ...response.data.data,
+          name: response.data.data.user.name,
+          email: response.data.data.user.email,
+        })
+      }
     } catch (error: any) {
       throw error
     }
@@ -83,22 +89,17 @@ export function ProfileForm() {
       })
 
       if (response.data.success) {
-        const p = {
-          ...response.data.data.tutorProfile,
-          name: response.data.data.name,
-          email: response.data.data.email,
-          avatar: response.data.data.avatar,
-        }
-
-        setProfile(p)
-        form.reset(p)
+        setProfile(response.data.data)
+        form.reset({
+          ...response.data.data,
+          name: response.data.data.user.name,
+          email: response.data.data.user.email,
+        })
       }
-
-      console.log("Profile fetch successfully!")
     } catch (error: any) {
       toast.add({
         type: "error",
-        description: "The profile not fetching failed.",
+        description: "The profile fetching failed.",
         priority: "high",
       })
     } finally {
@@ -120,10 +121,10 @@ export function ProfileForm() {
             ) : (
               <Avatar className="h-28 w-28 grayscale">
                 <AvatarImage
-                  src={profile?.avatar || "https://i.pravatar.cc/150?img=10"}
-                  alt={profile?.name || "@pranathip"}
+                  src={profile?.user.avatar || ""}
+                  alt={profile?.user.name || "@pranathip"}
                 />
-                <AvatarFallback>XX</AvatarFallback>
+                <AvatarFallback>ZI</AvatarFallback>
                 <Button
                   onClick={(e) => {
                     e.stopPropagation()
@@ -145,20 +146,14 @@ export function ProfileForm() {
                 </>
               ) : (
                 <>
-                  <Label className="text-xl">{profile?.name}</Label>
+                  <Label className="text-xl">{profile?.user.name}</Label>
                   <p className="line-clamp-1 text-sm text-muted-foreground">
                     {profile?.bio}
                   </p>
                 </>
               )}
             </div>
-            <Badge
-              className="absolute top-0 right-0 bg-sky-50 text-sky-700 dark:bg-sky-950 dark:text-sky-300"
-              variant="secondary"
-            >
-              <BadgeCheck data-icon="inline-start" />
-              Verified
-            </Badge>
+            <VerifiedBadge />
           </div>
           <Controller
             name="email"
@@ -381,8 +376,18 @@ export function ProfileForm() {
         open={avatarModalOpen}
         onOpenChange={setAvatarModalOpen}
         apiEndpoint="/uploads"
-        onUploadComplete={({ files, data }) => {
-          console.log("Response of upload: ", data, files)
+        onUploadComplete={({ data }) => {
+          setProfile((prev) => {
+            if (!prev) return prev
+
+            return {
+              ...prev,
+              user: {
+                ...prev.user,
+                avatar: data.url,
+              },
+            }
+          })
         }}
       />
     </>
