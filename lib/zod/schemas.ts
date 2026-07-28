@@ -11,10 +11,20 @@ export const tutorProfileSchema = z.object({
 
 export type TutorProfileFormValues = z.infer<typeof tutorProfileSchema>
 
-export const createBookingSchema = z.object({
+export const createBookingSchemaApi = z.object({
   tutorId: z.string().min(1),
   subject: z.string().min(1, "Select a subject"),
   dateTime: z.string().min(1, "Select Date/time"), // ISO string from datetime-local input
+  duration: z.number().min(30),
+})
+
+export type CreateBookingInputAPI = z.infer<typeof createBookingSchemaApi>
+
+export const createBookingSchema = z.object({
+  tutorId: z.string().min(1),
+  subject: z.string().min(1, "Select a subject"),
+  date: z.date("Select booking date"),
+  time: z.string().min(1, "Select booking time"), // "HH:mm" format
   duration: z.number().min(30),
 })
 

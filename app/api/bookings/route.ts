@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import { createClient } from "@/lib/supabase/server"
-import { createBookingSchema } from "@/lib/zod/schemas"
+import { createBookingSchemaApi } from "@/lib/zod/schemas"
 import { NextResponse } from "next/server"
 
 export async function POST(req: Request) {
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
   }
 
   const body = await req.json()
-  const parsed = createBookingSchema.safeParse(body)
+  const parsed = createBookingSchemaApi.safeParse(body)
   if (!parsed.success) {
     return NextResponse.json(
       { error: "Invalid input", details: parsed.error, success: false },
