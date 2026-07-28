@@ -44,7 +44,7 @@ export async function proxy(request: NextRequest) {
 
   // Protect dashboard routes
   const isProtectedRoute =
-    pathname.startsWith("/t/dashboard") || pathname.startsWith("/s/dashboard")
+    pathname.startsWith("/tutor") || pathname.startsWith("/student")
 
   if (!user && isProtectedRoute) {
     return NextResponse.redirect(new URL("/login", request.url))
@@ -54,5 +54,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/login", "/signup", "/t/dashboard/:path*", "/s/dashboard/:path*"],
+  matcher: ["/login", "/signup", "/tutor/:path*", "/student/:path*"],
 }

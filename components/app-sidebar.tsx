@@ -9,19 +9,10 @@ import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar"
-
-// lib/sidebar-config.ts
-
-import { loggedInUserProfile } from "@/lib/auth"
+import { Role } from "@/interfaces"
 import {
   Calendar,
   DollarSign,
@@ -29,34 +20,33 @@ import {
   Home,
   Settings,
   Star,
-  User
 } from "lucide-react"
 
 export const tutorSidebar = {
   navMain: [
     {
       title: "Dashboard",
-      url: "/t/dashboard",
+      url: "/tutor",
       icon: Home,
     },
     {
       title: "Bookings",
-      url: "/t/dashboard/bookings",
+      url: "/tutor/bookings",
       icon: Calendar,
     },
     {
       title: "Reviews",
-      url: "/t/dashboard/reviews",
+      url: "/tutor/reviews",
       icon: Star,
     },
     {
       title: "Earnings",
-      url: "/t/dashboard/earnings",
+      url: "/tutor/earnings",
       icon: DollarSign,
     },
     {
       title: "Settings",
-      url: "/t/dashboard/settings",
+      url: "/tutor/settings",
       icon: Settings,
     },
   ],
@@ -66,12 +56,12 @@ export const studentSidebar = {
   navMain: [
     {
       title: "Dashboard",
-      url: "/s/dashboard",
+      url: "/student",
       icon: Home,
     },
     {
       title: "My Bookings",
-      url: "/s/dashboard/bookings",
+      url: "/student/bookings",
       icon: Calendar,
     },
     {
@@ -81,7 +71,7 @@ export const studentSidebar = {
     },
     {
       title: "Settings",
-      url: "/s/dashboard/settings",
+      url: "/student/settings",
       icon: Settings,
     },
   ],
@@ -89,7 +79,7 @@ export const studentSidebar = {
 
 type AppSidebarProps = React.ComponentProps<typeof Sidebar> & {
   profile: {
-    role: "TUTOR" | "STUDENT"
+    role: Role
     name: string
     email: string
     avatar: string | null

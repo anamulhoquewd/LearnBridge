@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Tutor } from "@/interfaces"
 import { Clock, Star, Users } from "lucide-react"
 import VerifiedBadge from "./verified-badge"
+import { BookNowButton } from "./book-now-button"
 
 export function TutorProfileHeader({ tutor }: { tutor: Tutor }) {
   return (
@@ -55,9 +56,12 @@ export function TutorProfileHeader({ tutor }: { tutor: Tutor }) {
             </div>
 
             {/* CTA Button */}
-            <Button size="lg" className="gap-2">
-              Book a Session
-            </Button>
+            <BookNowButton
+              tutorId={tutor.userId}
+              tutorName={tutor.user.name}
+              subjects={tutor.subjects}
+              hourlyRate={tutor.hourlyRate}
+            />
           </div>
 
           {/* Quick Stats */}

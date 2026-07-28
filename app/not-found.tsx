@@ -1,14 +1,15 @@
-import { Button } from "@/components/ui/button";
-import { generateMeta } from "@/lib/utils";
-import { ArrowRight } from "lucide-react";
-import { Metadata } from "next";
+import { Button } from "@/components/ui/button"
+import { generateMeta } from "@/lib/utils"
+import { ArrowRight } from "lucide-react"
+import { Metadata } from "next"
+import Image from "next/image"
 
 export async function generateMetadata(): Promise<Metadata> {
   return generateMeta({
     title: "404 Error Page",
     description:
       "This is an example of a template for 404 error pages. Built with technologies like Tailwind CSS, Next.js, React and Shadcn.",
-  });
+  })
 }
 
 export default function Error404() {
@@ -31,12 +32,14 @@ export default function Error404() {
       </div>
 
       <div className="hidden lg:block">
-        <img
-          src={`/images/404.svg`}
+        <Image
+          width={1000}
+          height={1000}
+          src={`/404-error-bro.svg`}
           alt="Login visual"
           className="object-contain"
         />
       </div>
     </div>
-  );
+  )
 }

@@ -19,6 +19,7 @@ import { createClient } from "@/lib/supabase/client"
 import { cn } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { AlertCircleIcon } from "lucide-react"
+import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
@@ -64,7 +65,7 @@ export function LoginForm({
       })
 
       const role = authData.user?.user_metadata?.role
-      router.push(role === "TUTOR" ? "/t/dashboard" : "/s/dashboard")
+      router.push(role === "TUTOR" ? "/tutor" : "/student")
       router.refresh() // Essential for picking up a new session in server components.
     } catch (error: any) {
       const friendlyMessage = getFriendlyErrorMessage(
@@ -88,7 +89,6 @@ export function LoginForm({
     return () => subscription.unsubscribe()
   }, [form, form.formState.errors.root])
 
-
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden p-0">
@@ -98,7 +98,7 @@ export function LoginForm({
               <div className="flex flex-col items-center gap-2 text-center">
                 <h1 className="text-2xl font-bold">Welcome back</h1>
                 <p className="text-balance text-muted-foreground">
-                  Login to your Acme Inc account
+                  Login to your Learn Bridge account
                 </p>
               </div>
               <Controller
@@ -158,7 +158,7 @@ export function LoginForm({
               {form.formState.errors?.root?.message && (
                 <Alert variant="destructive" className="max-w-md">
                   <AlertCircleIcon />
-                  <AlertTitle>Sign Up failed</AlertTitle>
+                  <AlertTitle>Sign In failed</AlertTitle>
                   <AlertDescription>
                     {form.formState.errors.root.message ||
                       "Something went wrong. Please try again."}
@@ -221,8 +221,10 @@ export function LoginForm({
             </FieldGroup>
           </form>
           <div className="relative hidden bg-muted md:block">
-            <img
-              src="/placeholder.svg"
+            <Image
+              width={1000}
+              height={1200}
+              src="/Login-pana.svg"
               alt="Image"
               className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
             />

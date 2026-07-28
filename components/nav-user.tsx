@@ -16,6 +16,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { useLogout } from "@/hooks/auth/logout"
 import {
   BadgeCheckIcon,
   BellIcon,
@@ -37,6 +38,8 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+  const { handleLogout, loading } = useLogout()
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -100,7 +103,7 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem disabled={loading} onClick={handleLogout}>
               <LogOutIcon />
               Log out
             </DropdownMenuItem>

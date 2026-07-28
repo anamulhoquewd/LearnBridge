@@ -14,15 +14,15 @@ export async function generateMetadata(): Promise<Metadata> {
 const sidebarNavItems = [
   {
     title: "Profile",
-    href: "/t/dashboard/settings",
+    href: "/student/settings",
   },
   {
     title: "Socials",
-    href: "/t/dashboard/settings/socials",
+    href: "/student/settings/socials",
   },
   {
     title: "Appearance",
-    href: "/t/dashboard/settings/appearance",
+    href: "/student/settings/appearance",
   },
   {
     title: "Notifications",
@@ -36,8 +36,8 @@ export default function SettingsLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="mx-auto container max-w-5xl">
-      <div className="mb-8 space-y-1">
+    <>
+      <div className="m-auto mb-8 space-y-1">
         <h2 className="text-2xl font-bold tracking-tight">Settings</h2>
         <p className="max-w-2/3 text-muted-foreground">
           Configure your system preferences, manage team permissions, set up
@@ -54,6 +54,6 @@ export default function SettingsLayout({
         </aside>
         <div className="flex-1 lg:max-w-2xl">{children}</div>
       </div>
-    </div>
+    </>
   )
 }

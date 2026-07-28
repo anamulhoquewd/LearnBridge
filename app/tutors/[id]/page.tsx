@@ -19,6 +19,8 @@ export default async function TutorProfilePage({
     include: { user: { select: { name: true, avatar: true, email: true } } },
   })
 
+  console.log("Tutor: ", tutor)
+
   if (!tutor) return notFound()
 
   return (

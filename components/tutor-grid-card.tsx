@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Tutor } from "@/interfaces"
 import { Star } from "lucide-react"
 import VerifiedBadge from "./verified-badge"
+import { BookNowButton } from "./book-now-button"
 
 export interface TutorGridCardProps extends Tutor {
   onViewProfile: (id: string) => void
@@ -20,6 +21,7 @@ export function TutorGridCard({
   avgRating,
   totalReviews,
   onViewProfile,
+  userId,
 }: TutorGridCardProps) {
   const getInitials = (text: string) => {
     return text
@@ -75,7 +77,13 @@ export function TutorGridCard({
           <Button onClick={() => onViewProfile(id)} variant="outline">
             View Profile
           </Button>
-          <Button>Book Now</Button>
+          {/* CTA Button */}
+          <BookNowButton
+            tutorId={userId}
+            tutorName={name}
+            subjects={subjects}
+            hourlyRate={hourlyRate}
+          />
         </div>
       </CardContent>
       <VerifiedBadge className="top-1/30 right-1/30" />

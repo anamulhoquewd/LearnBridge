@@ -53,7 +53,7 @@ export async function requireTutor() {
   })
 
   if (profile?.role !== "TUTOR") {
-    redirect("/s/dashboard")
+    redirect("/student")
   }
 
   return user
@@ -80,7 +80,7 @@ export async function requireStudent() {
   })
 
   if (profile?.role !== "STUDENT") {
-    redirect("/t/dashboard")
+    redirect("/tutor")
   }
 
   return user

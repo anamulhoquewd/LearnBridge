@@ -29,6 +29,7 @@ import { useEffect } from "react"
 import { Controller, useForm } from "react-hook-form"
 import * as z from "zod"
 import { toast } from "./ui/toast"
+import Image from "next/image"
 
 export function SignupForm({
   className,
@@ -337,10 +338,12 @@ export function SignupForm({
             </FieldGroup>
           </form>
           <div className="relative hidden bg-muted md:block">
-            <img
-              src="/placeholder.svg"
+            <Image
+              width={500}
+              height={500}
+              src="/thank-you-teacher-bro.svg"
               alt="Image"
-              className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+              className="absolute inset-0 my-auto w-full object-cover dark:brightness-[0.2] dark:grayscale"
             />
           </div>
         </CardContent>
