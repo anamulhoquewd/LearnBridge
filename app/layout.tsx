@@ -8,8 +8,11 @@ import "./globals.css"
 import { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "TutorHub - Tutoring Marketplace",
-  description: "Connect with expert tutors or share your expertise as a tutor",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+  ),
+  title: "LearnBridge — Find Your Perfect Tutor",
+  description: "Connect with expert tutors for personalized learning.",
   generator: "Anam",
   icons: {
     icon: [
