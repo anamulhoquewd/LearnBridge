@@ -62,8 +62,6 @@ export function BookNowButton({
     },
   })
 
-  console.log("Form values: ", form.getValues())
-
   const duration = form.watch("duration")
 
   const estimatedPrice = ((hourlyRate / 60) * duration).toFixed(2)
@@ -73,8 +71,6 @@ export function BookNowButton({
 
     const combinedDateTime = new Date(data.date)
     combinedDateTime.setHours(hours, minutes, 0, 0)
-
-    console.log("combined date time: ", combinedDateTime)
 
     try {
       const response = await toast.promise(

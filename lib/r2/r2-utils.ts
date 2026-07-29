@@ -8,9 +8,6 @@ import { r2 } from "./config"
 const R2_BUCKET = process.env.R2_BUCKET || "LearnBridge"
 const R2_PUBLIC_URL = process.env.R2_PUBLIC_URL
 
-console.log("bucket: ", R2_BUCKET)
-console.log("public url: ", R2_PUBLIC_URL)
-
 export async function fileToBuffer(file: File) {
   const arrayBuffer = await file.arrayBuffer()
   return Buffer.from(arrayBuffer)
@@ -156,8 +153,6 @@ export async function deleteMultipleFiles(keys: string[]) {
     })
 
     const result = await r2.send(command)
-
-    console.log("R2 delete multiple result:", result)
 
     return {
       success: true,

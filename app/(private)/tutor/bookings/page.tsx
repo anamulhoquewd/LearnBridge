@@ -11,7 +11,7 @@ interface Booking {
   duration: number
   price: number
   status: string
-  student: { name: string; image: string | null }
+  student: { name: string; avatar: string | null }
 }
 
 // @TODO: components modify korte hobe.

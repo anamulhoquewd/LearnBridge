@@ -19,9 +19,13 @@ export default async function TutorProfilePage({
     include: { user: { select: { name: true, avatar: true, email: true } } },
   })
 
-  console.log("Tutor: ", tutor)
-
   if (!tutor) return notFound()
+
+  const reviews = await prisma.review.findMany({
+    where: { booking: { tutorId: tutor.userId } },
+    include: { author: { select: { name: true, avatar: true } } },
+    orderBy: { createdAt: "desc" },
+  })
 
   return (
     <>
@@ -207,7 +211,7 @@ export default async function TutorProfilePage({
               </Card>
 
               {/* Reviews */}
-              <TutorReviewsSection />
+              <TutorReviewsSection reviews={reviews} />
             </div>
           </div>
         </main>

@@ -29,3 +29,12 @@ export const createBookingSchema = z.object({
 })
 
 export type CreateBookingInput = z.infer<typeof createBookingSchema>
+
+
+export const createReviewSchema = z.object({
+  bookingId: z.string().min(1),
+  rating: z.number().min(1).max(5),
+  comment: z.string().max(500),
+})
+
+export type CreateReviewSchema = z.infer<typeof createReviewSchema>

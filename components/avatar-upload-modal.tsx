@@ -42,9 +42,7 @@ export function AvatarUploadModal({
       files.forEach((file) => {
         formData.append("file", file)
       })
-      for (const [key, value] of formData.entries()) {
-        console.log(key, value)
-      }
+
       const response = await toast.promise(
         api.post(apiEndpoint, formData, {
           headers: {

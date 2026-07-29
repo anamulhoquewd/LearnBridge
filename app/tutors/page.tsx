@@ -43,8 +43,6 @@ export default function TutorsPage() {
     }
   }
   const handleViewProfile = (id: string) => {
-    // TODO: Navigate to tutor profile page
-    console.log("View profile:", id)
     router.push(`/tutors/${id}`)
   }
 

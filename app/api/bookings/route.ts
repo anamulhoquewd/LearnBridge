@@ -98,7 +98,17 @@ export async function GET(req: Request) {
       profile.role === "TUTOR" ? { tutorId: user.id } : { studentId: user.id },
     include: {
       student: { select: { name: true, email: true, avatar: true } },
-      tutor: { select: { name: true, email: true, avatar: true } },
+      tutor: {
+        select: {
+          name: true,
+          email: true,
+          avatar: true,
+          tutorProfile: {
+            select: { avgRating: true, totalReviews: true, bio: true },
+          },
+        },
+      },
+      payment: { select: { status: true } },
     },
     orderBy: { dateTime: "desc" },
   })
