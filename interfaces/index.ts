@@ -10,6 +10,14 @@ export interface Tutor {
   user: { name: string; avatar: string | null; email: string }
 }
 
+export interface Student {
+  id: string
+  name: string
+  avatar: string | null
+  email: string
+  role: "STUDENT"
+}
+
 export type Role = "TUTOR" | "STUDENT"
 
 export type PaymentStatus = "PENDING" | "PAID" | "FAILED" | "REFUNDED"

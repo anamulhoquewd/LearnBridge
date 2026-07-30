@@ -33,10 +33,9 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form"
 import { Skeleton } from "./ui/skeleton"
 import VerifiedBadge from "./verified-badge"
 
-export function ProfileForm() {
+export function TutorProfileForm() {
   const [profile, setProfile] = useState<Tutor>()
   const [loading, setLoading] = useState<boolean>(false)
-
   const [avatarModalOpen, setAvatarModalOpen] = useState(false)
 
   const form = useForm<TutorProfileFormValues>({

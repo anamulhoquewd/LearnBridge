@@ -5,7 +5,7 @@ import {
 } from "@aws-sdk/client-s3"
 import { r2 } from "./config"
 
-const R2_BUCKET = process.env.R2_BUCKET || "LearnBridge"
+const R2_BUCKET = process.env.R2_BUCKET_NAME || "learn-bridge"
 const R2_PUBLIC_URL = process.env.R2_PUBLIC_URL
 
 export async function fileToBuffer(file: File) {

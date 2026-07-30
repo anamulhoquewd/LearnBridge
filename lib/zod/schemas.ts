@@ -11,6 +11,13 @@ export const tutorProfileSchema = z.object({
 
 export type TutorProfileFormValues = z.infer<typeof tutorProfileSchema>
 
+export const studentProfileSchema = z.object({
+  name: z.string().optional(),
+  email: z.email().optional(),
+})
+
+export type StudentProfileFormValues = z.infer<typeof studentProfileSchema>
+
 export const createBookingSchemaApi = z.object({
   tutorId: z.string().min(1),
   subject: z.string().min(1, "Select a subject"),
@@ -29,7 +36,6 @@ export const createBookingSchema = z.object({
 })
 
 export type CreateBookingInput = z.infer<typeof createBookingSchema>
-
 
 export const createReviewSchema = z.object({
   bookingId: z.string().min(1),

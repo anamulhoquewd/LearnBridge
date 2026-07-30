@@ -25,6 +25,10 @@ const sidebarNavItems = [
     href: "/student/settings/appearance",
   },
   {
+    title: "Change Password",
+    href: "#",
+  },
+  {
     title: "Notifications",
     href: "#",
   },

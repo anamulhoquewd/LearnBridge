@@ -69,9 +69,8 @@ export default function MyBookingsPage() {
 
   async function handlePayment(bookingId: string) {
     // API call to Stripe checkout
-    console.log("Payment initiated for booking:", bookingId)
-    // const res = await api.post("/payments/checkout", { bookingId })
-    // window.location.href = res.data.data.url
+    const res = await api.post("/payments/checkout", { bookingId })
+    window.location.href = res.data.data.url
   }
 
   const toggleFilter = (filter: string, value: string) => {

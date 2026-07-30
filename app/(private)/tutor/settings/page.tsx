@@ -1,11 +1,11 @@
-import { ProfileForm } from "@/components/profile-form"
+import { TutorProfileForm } from "@/components/tutor-profile-form"
 import { Card, CardContent } from "@/components/ui/card"
 
 export default function SettingsProfilePage() {
   return (
     <Card className={"[--card-spacing:--spacing(8)]"}>
       <CardContent>
-        <ProfileForm />
+        <TutorProfileForm />
       </CardContent>
     </Card>
   )

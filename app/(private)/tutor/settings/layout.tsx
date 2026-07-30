@@ -1,7 +1,7 @@
+import { SidebarNav } from "@/components/settings-sidebar-nav"
 import { Card, CardContent } from "@/components/ui/card"
 import { generateMeta } from "@/lib/utils"
 import { Metadata } from "next"
-import { SidebarNav } from "@/components/settings-sidebar-nav"
 
 export async function generateMetadata(): Promise<Metadata> {
   return generateMeta({
@@ -25,6 +25,10 @@ const sidebarNavItems = [
     href: "/tutor/settings/appearance",
   },
   {
+    title: "Change Password",
+    href: "#",
+  },
+  {
     title: "Notifications",
     href: "#",
   },
@@ -36,7 +40,7 @@ export default function SettingsLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="mx-auto container max-w-5xl">
+    <div className="container mx-auto max-w-5xl">
       <div className="mb-8 space-y-1">
         <h2 className="text-2xl font-bold tracking-tight">Settings</h2>
         <p className="max-w-2/3 text-muted-foreground">

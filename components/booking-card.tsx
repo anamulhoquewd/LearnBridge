@@ -205,7 +205,7 @@ export function BookingCard({
 
         {/* Actions */}
         <div className="flex gap-2">
-          {status === "CONFIRMED" && payment?.status === "PENDING" && (
+          {status === "CONFIRMED" && payment?.status !== "PAID" && (
             <Button
               onClick={() => onPayment?.(id)}
               className="flex-1"
