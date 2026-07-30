@@ -1,8 +1,11 @@
 "use client"
 
-import { Button } from "@/components/ui/button";
-import api from "@/lib/axios/api";
-import { useEffect, useState } from "react";
+import { BookingCardSkeleton } from "@/components/booking-card-sekeleton"
+import { BookingCard } from "@/components/student/booking-card"
+import { Card, CardContent } from "@/components/ui/card"
+import api from "@/lib/axios/api"
+import { BookingStatus } from "@prisma/client"
+import { useEffect, useState } from "react"
 
 interface Booking {
   id: string
@@ -10,14 +13,9 @@ interface Booking {
   dateTime: string
   duration: number
   price: number
-  status: string
+  status: BookingStatus
   student: { name: string; avatar: string | null }
 }
-
-// @TODO: components modify korte hobe.
-// @TODO: api call modify korte hobe.
-// @TODO: booking card a thaka student name a click korle studetn profile view kora jabe. ans same for tutro
-
 export default function TutorBookingsPage() {
   const [bookings, setBookings] = useState<Booking[]>([])
   const [loading, setLoading] = useState(true)
@@ -33,80 +31,114 @@ export default function TutorBookingsPage() {
     setLoading(false)
   }
 
-  async function updateStatus(id: string, status: "CONFIRMED" | "REJECTED") {
-    await api.patch(`/bookings/${id}`, { status })
-    fetchBookings() // refresh list after update
+  async function updateStatus(id: string, status: BookingStatus) {
+    try {
+      await api.patch(`/bookings/${id}`, { status })
+      fetchBookings()
+    } catch (error: any) {
+      console.error("Error: ", error)
+      throw new Error(error)
+    }
   }
 
-  if (loading) return <p>Loading...</p>
+  if (loading) {
+    return (
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div>
+          <h2 className="mb-4 text-2xl font-semibold">Booking Requests</h2>
+          <div className="space-y-4">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <BookingCardSkeleton key={i} />
+            ))}
+          </div>
+        </div>
+        <div>
+          <h2 className="mb-4 text-2xl font-semibold">Upcoming Sessions</h2>
+          <div className="space-y-4">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <BookingCardSkeleton key={i} />
+            ))}
+          </div>
+        </div>
+      </div>
+    )
+  }
 
-  const pending = bookings.filter((b) => b.status === "PENDING")
+  const requests = bookings.filter((b) => b.status === "PENDING")
   const others = bookings.filter((b) => b.status !== "PENDING")
 
   return (
-    <div className="mx-auto max-w-3xl space-y-8 py-8">
+    <div className="grid gap-6 lg:grid-cols-2">
+      {/* Pending Requests */}
       <div>
-        <h2 className="mb-4 text-xl font-bold">Pending Requests</h2>
-        {pending.length === 0 ? (
-          <p className="text-gray-500">No pending requests.</p>
-        ) : (
-          <div className="space-y-3">
-            {pending.map((b) => (
-              <div
-                key={b.id}
-                className="flex items-center justify-between rounded-lg border p-4"
-              >
-                <div>
-                  <p className="font-semibold">{b.student.name}</p>
-                  <p className="text-sm text-gray-600">
-                    {b.subject} &middot; {new Date(b.dateTime).toLocaleString()}{" "}
-                    &middot; {b.duration} min
-                  </p>
-                  <p className="text-sm text-gray-500">${b.price.toFixed(2)}</p>
-                </div>
-                <div className="flex gap-2">
-                  <Button onClick={() => updateStatus(b.id, "CONFIRMED")}>
-                    Accept
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => updateStatus(b.id, "REJECTED")}
-                  >
-                    Reject
-                  </Button>
-                </div>
-              </div>
+        <h2 className="mb-4 text-2xl font-semibold">Booking Requests</h2>
+        {requests.length > 0 ? (
+          <div className="space-y-4">
+            {bookings.map((booking) => (
+              <BookingCard
+                id={booking.id}
+                key={booking.id}
+                name={booking.student.name}
+                subject={booking.subject}
+                date={new Date(booking.dateTime)}
+                time={new Date(booking.dateTime)}
+                status={booking.status}
+                actionLabel={"Accept"}
+                secondaryActionLabel={"Decline"}
+                onAction={(id, status) => updateStatus(id, status)}
+                onSecondaryAction={() =>
+                  console.log("Secondary action clicked for", booking.id)
+                }
+              />
             ))}
           </div>
+        ) : (
+          <Card>
+            <CardContent className="flex items-center justify-center py-8">
+              <p className="text-muted-foreground">No pending requests</p>
+            </CardContent>
+          </Card>
         )}
       </div>
 
+      {/* Upcoming Sessions */}
       <div>
-        <h2 className="mb-4 text-xl font-bold">Booking History</h2>
-        {others.length === 0 ? (
-          <p className="text-gray-500">No past bookings yet.</p>
-        ) : (
-          <div className="space-y-3">
-            {others.map((b) => (
-              <div key={b.id} className="rounded-lg border p-4">
-                <p className="font-semibold">{b.student.name}</p>
-                <p className="text-sm text-gray-600">
-                  {b.subject} &middot; {new Date(b.dateTime).toLocaleString()}
-                </p>
-                <span
-                  className={`rounded-full px-2 py-1 text-xs ${
-                    b.status === "CONFIRMED"
-                      ? "bg-green-100 text-green-700"
-                      : b.status === "REJECTED"
-                        ? "bg-red-100 text-red-700"
-                        : "bg-gray-100 text-gray-700"
-                  }`}
-                >
-                  {b.status}
-                </span>
-              </div>
-            ))}
+        <h2 className="mb-4 text-2xl font-semibold">Upcoming Sessions</h2>
+        {others.length > 0 ? (
+          <div className="space-y-4">
+            {bookings.map((booking) => {
+              const actionLabel =
+                booking.status === "CONFIRMED"
+                  ? "Start Session"
+                  : booking.status === "REJECTED" ||
+                      booking.status === "CANCELLED"
+                    ? "View Details"
+                    : undefined
+
+              return (
+                <BookingCard
+                  id={booking.id}
+                  key={booking.id}
+                  name={booking.student.name}
+                  subject={booking.subject}
+                  date={new Date(booking.dateTime)}
+                  time={new Date(booking.dateTime)}
+                  status={booking.status}
+                  actionLabel={actionLabel}
+                  onAction={() => console.log("Cooming soon!")}
+                  onSecondaryAction={() =>
+                    console.log("Secondary action clicked for", booking.id)
+                  }
+                />
+              )
+            })}
           </div>
+        ) : (
+          <Card>
+            <CardContent className="flex items-center justify-center py-8">
+              <p className="text-muted-foreground">No upcoming sessions</p>
+            </CardContent>
+          </Card>
         )}
       </div>
     </div>
