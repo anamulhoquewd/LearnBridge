@@ -1,12 +1,11 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Tutor } from "@/interfaces"
+import { TutorProfileWithUser } from "@/interfaces"
 import { Clock, Star, Users } from "lucide-react"
-import VerifiedBadge from "./verified-badge"
 import { BookNowButton } from "./book-now-button"
+import VerifiedBadge from "./verified-badge"
 
-export function TutorProfileHeader({ tutor }: { tutor: Tutor }) {
+export function TutorProfileHeader({ tutor }: { tutor: TutorProfileWithUser }) {
   return (
     <>
       {/* Hero Section */}

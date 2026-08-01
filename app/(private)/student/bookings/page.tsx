@@ -1,7 +1,6 @@
 "use client"
 
 import { BookingCard } from "@/components/booking-card"
-import { PaymentStatus } from "@/interfaces"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 
@@ -16,7 +15,7 @@ import { Input } from "@/components/ui/input"
 import api from "@/lib/axios/api"
 import { ChevronDown, Filter, Search } from "lucide-react"
 import { useMemo } from "react"
-import { BookingStatus } from "@prisma/client"
+import { BookingStatus, PaymentStatus } from "@prisma/client"
 
 interface Booking {
   id: string

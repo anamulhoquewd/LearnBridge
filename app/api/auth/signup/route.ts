@@ -56,9 +56,9 @@ export async function POST(req: Request) {
           tutorProfile: {
             create: {
               bio: "",
-              hourlyRate: 1000,
+              hourlyRate: 0,
               avgRating: 0,
-              experience: 2,
+              experience: 0,
             },
           },
         }),

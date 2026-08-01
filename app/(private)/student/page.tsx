@@ -1,7 +1,7 @@
 import { StudentDashboard } from "@/components/student/student-dashboard"
 
 export const metadata = {
-  title: "Student Dashboard - TutorHub",
+  title: "Student Dashboard - LearnBridge",
   description: "Your tutoring dashboard",
 }
 

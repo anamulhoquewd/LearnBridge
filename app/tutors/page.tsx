@@ -4,15 +4,16 @@ import { TutorFilterBar } from "@/components/tutor-filter-bar"
 import { TutorGridCard } from "@/components/tutor-grid-card"
 import { TutorListCard } from "@/components/tutor-list-card"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Tutor } from "@/interfaces"
+import { TutorProfileWithUser } from "@/interfaces"
 import api from "@/lib/axios/api"
+import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useDebounce } from "use-debounce"
 
 export default function TutorsPage() {
   const [loading, setLoading] = useState(true)
-  const [tutors, setTutors] = useState<Tutor[]>([])
+  const [tutors, setTutors] = useState<TutorProfileWithUser[]>([])
   const [query, setQuery] = useState("")
   const [subjects, setSubjects] = useState<string[]>([])
   const [currentView, setCurrentView] = useState<"grid" | "list">("grid")
@@ -54,13 +55,13 @@ export default function TutorsPage() {
     <>
       {/* Header */}
       <header className="border-b border-border">
-        <div className="container mx-auto flex items-center justify-between px-4 py-6 md:px-6">
-          <div className="flex items-center gap-2">
-            <div className="flex size-8 items-center justify-center rounded-lg bg-primary font-bold text-primary-foreground">
-              T
-            </div>
-            <span className="text-xl font-bold">TutorHub</span>
-          </div>
+        <div className="container mx-auto flex items-center justify-between px-4 py-2 md:px-6">
+          <Image
+            width={120}
+            height={120}
+            alt="LearnBridge"
+            src={"/logo/learnbridge_bold_stacked.svg"}
+          />
           <nav className="hidden gap-6 md:flex">
             <a
               href="#"
@@ -83,6 +84,7 @@ export default function TutorsPage() {
           </nav>
         </div>
       </header>
+
       <main className="container mx-auto my-4 mt-6">
         <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
           <div>

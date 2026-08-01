@@ -4,12 +4,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { Tutor } from "@/interfaces"
+import { TutorProfileWithUser } from "@/interfaces"
 import { Star } from "lucide-react"
 import { BookNowButton } from "./book-now-button"
 import VerifiedBadge from "./verified-badge"
 
-export interface TutorGridCardProps extends Tutor {
+export interface TutorGridCardProps extends TutorProfileWithUser {
   onViewProfile: (id: string) => void
 }
 

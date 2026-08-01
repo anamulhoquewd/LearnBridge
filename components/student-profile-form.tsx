@@ -15,11 +15,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Spinner } from "@/components/ui/spinner"
 import { toast } from "@/components/ui/toast"
-import { Student } from "@/interfaces"
 import api from "@/lib/axios/api"
 import {
-    StudentProfileFormValues,
-    studentProfileSchema,
+  StudentProfileFormValues,
+  studentProfileSchema,
 } from "@/lib/zod/schemas"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { AlertCircleIcon, CloudUpload } from "lucide-react"
@@ -27,9 +26,10 @@ import { useEffect, useState } from "react"
 import { Controller, SubmitHandler, useForm } from "react-hook-form"
 import { Skeleton } from "./ui/skeleton"
 import VerifiedBadge from "./verified-badge"
+import { Profile } from "@prisma/client"
 
 export function StudentProfileForm() {
-  const [profile, setProfile] = useState<Student>()
+  const [profile, setProfile] = useState<Profile>()
   const [loading, setLoading] = useState<boolean>(false)
   const [avatarModalOpen, setAvatarModalOpen] = useState(false)
 

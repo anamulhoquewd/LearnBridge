@@ -22,7 +22,7 @@ import { Label } from "@/components/ui/label"
 import { Spinner } from "@/components/ui/spinner"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "@/components/ui/toast"
-import { Tutor } from "@/interfaces"
+import { TutorProfileWithUser } from "@/interfaces"
 import api from "@/lib/axios/api"
 import { SUBJECT_OPTIONS } from "@/lib/constant"
 import { TutorProfileFormValues, tutorProfileSchema } from "@/lib/zod/schemas"
@@ -34,7 +34,7 @@ import { Skeleton } from "./ui/skeleton"
 import VerifiedBadge from "./verified-badge"
 
 export function TutorProfileForm() {
-  const [profile, setProfile] = useState<Tutor>()
+  const [profile, setProfile] = useState<TutorProfileWithUser>()
   const [loading, setLoading] = useState<boolean>(false)
   const [avatarModalOpen, setAvatarModalOpen] = useState(false)
 

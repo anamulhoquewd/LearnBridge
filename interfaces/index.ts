@@ -1,49 +1,9 @@
-export interface Tutor {
-  id: string
-  userId: string
-  subjects: string[]
-  hourlyRate: number
-  bio: string
-  avgRating: number
-  totalReviews: number
-  experience: number
-  user: { name: string; avatar: string | null; email: string }
+import { Profile, Review, TutorProfile } from "@prisma/client"
+
+export type TutorProfileWithUser = TutorProfile & {
+  user: Profile
 }
 
-export interface Student {
-  id: string
-  name: string
-  avatar: string | null
-  email: string
-  role: "STUDENT"
-}
-
-export type Role = "TUTOR" | "STUDENT"
-
-export type PaymentStatus = "PENDING" | "PAID" | "FAILED" | "REFUNDED"
-
-export type BookingStatus =
-  "PENDING" | "CONFIRMED" | "REJECTED" | "COMPLETED" | "CANCELLED"
-
-export interface Review {
-  rating: number
-  id: string
-  createdAt: Date
-  bookingId: string
-  authorId: string
-  comment: string | null
-
-  author: {
-    name: string
-    avatar: string | null
-  }
-}
-
-export interface Booking {
-  studentId: string
-  tutorId: string
-  subject: string
-  dateTime: string
-  price: number
-  status: BookingStatus
+export type ReviewWithAuthor = Review & {
+  author: Profile
 }

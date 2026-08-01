@@ -12,7 +12,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { Role } from "@/interfaces"
+import { Role } from "@prisma/client"
 import {
   Calendar,
   DollarSign,

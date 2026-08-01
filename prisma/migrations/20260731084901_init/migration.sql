@@ -2,6 +2,9 @@
 CREATE TYPE "Role" AS ENUM ('STUDENT', 'TUTOR');
 
 -- CreateEnum
+CREATE TYPE "PaymentStatus" AS ENUM ('PENDING', 'PAID', 'FAILED', 'REFUNDED');
+
+-- CreateEnum
 CREATE TYPE "BookingStatus" AS ENUM ('PENDING', 'CONFIRMED', 'REJECTED', 'COMPLETED', 'CANCELLED');
 
 -- CreateTable
@@ -56,7 +59,7 @@ CREATE TABLE "Payment" (
     "bookingId" TEXT NOT NULL,
     "stripeSessionId" TEXT,
     "amount" DOUBLE PRECISION NOT NULL,
-    "status" TEXT NOT NULL DEFAULT 'PENDING',
+    "status" "PaymentStatus" NOT NULL DEFAULT 'PENDING',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Payment_pkey" PRIMARY KEY ("id")

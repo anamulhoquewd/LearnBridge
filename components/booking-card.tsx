@@ -7,7 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { BookingStatus, PaymentStatus } from "@/interfaces"
+import { BookingStatus, PaymentStatus } from "@prisma/client"
 import {
   Calendar,
   Clock,

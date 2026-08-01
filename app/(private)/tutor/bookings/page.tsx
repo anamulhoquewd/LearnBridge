@@ -84,8 +84,9 @@ export default function TutorBookingsPage() {
                 time={new Date(booking.dateTime)}
                 status={booking.status}
                 actionLabel={"Accept"}
+
                 secondaryActionLabel={"Decline"}
-                onAction={(id, status) => updateStatus(id, status)}
+                onAction={updateStatus}
                 onSecondaryAction={() =>
                   console.log("Secondary action clicked for", booking.id)
                 }

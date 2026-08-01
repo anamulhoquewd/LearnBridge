@@ -41,12 +41,6 @@ export function BookingCard({
       .slice(0, 2)
   }
 
-  const formattedDate = new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(date)
-
   return (
     <Card>
       <CardHeader>
@@ -80,7 +74,7 @@ export function BookingCard({
             {actionLabel && (
               <Button
                 size="sm"
-                onClick={() => onAction(id, status)}
+                onClick={() => onAction(id, "CONFIRMED")}
                 className="flex-1"
               >
                 {actionLabel}
@@ -90,7 +84,7 @@ export function BookingCard({
               <Button
                 size="sm"
                 variant="outline"
-                onClick={() => onAction(id, status)}
+                onClick={() => onAction(id, "REJECTED")}
                 className="flex-1"
               >
                 {secondaryActionLabel}

@@ -2,10 +2,14 @@
 
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tutor } from "@/interfaces"
+import { TutorProfileWithUser } from "@/interfaces"
 import { Award, BookOpen, Globe, Mail, MapPin, Phone } from "lucide-react"
 
-export function TutorProfileSidebar({ tutor }: { tutor: Tutor }) {
+export function TutorProfileSidebar({
+  tutor,
+}: {
+  tutor: TutorProfileWithUser
+}) {
   // Sample data - replace with API data
   const qualifications = [
     "B.S. Mathematics",

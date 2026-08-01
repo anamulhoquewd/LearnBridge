@@ -38,7 +38,9 @@ export async function PATCH(
   }
 
   const body = await req.json()
+  console.log("Body: ", body)
   const parsed = updateStatusSchema.safeParse(body)
+  console.log("Parsed: ", parsed)
   if (!parsed.success) {
     return NextResponse.json(
       { error: "Invalid status", success: false },

@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { prisma } from "@/lib/prisma"
 import { Clock, Users } from "lucide-react"
+import Image from "next/image"
 import { notFound } from "next/navigation"
 
 export default async function TutorProfilePage({
@@ -16,14 +17,14 @@ export default async function TutorProfilePage({
 
   const tutor = await prisma.tutorProfile.findUnique({
     where: { id },
-    include: { user: { select: { name: true, avatar: true, email: true } } },
+    include: { user: true },
   })
 
   if (!tutor) return notFound()
 
   const reviews = await prisma.review.findMany({
     where: { booking: { tutorId: tutor.userId } },
-    include: { author: { select: { name: true, avatar: true } } },
+    include: { author: true },
     orderBy: { createdAt: "desc" },
   })
 
@@ -31,13 +32,13 @@ export default async function TutorProfilePage({
     <>
       {/* Header */}
       <header className="border-b border-border">
-        <div className="container mx-auto flex items-center justify-between px-4 py-6 md:px-6">
-          <div className="flex items-center gap-2">
-            <div className="flex size-8 items-center justify-center rounded-lg bg-primary font-bold text-primary-foreground">
-              T
-            </div>
-            <span className="text-xl font-bold">TutorHub</span>
-          </div>
+        <div className="container mx-auto flex items-center justify-between px-4 py-2 md:px-6">
+          <Image
+            width={120}
+            height={120}
+            alt="LearnBridge"
+            src={"/logo/learnbridge_bold_stacked.svg"}
+          />
           <nav className="hidden gap-6 md:flex">
             <a
               href="#"
