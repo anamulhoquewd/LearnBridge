@@ -3,7 +3,7 @@
 A full-stack, two-sided tutoring marketplace connecting students with tutors — built as a portfolio project from scratch to deployed MVP in **5 days**.
 
 🔗 **Live Demo:** [https://learnbridge-tutor.vercel.app](https://learnbridge-tutor.vercel.app)
-🎥 **Demo Video:** _[add your Loom/YouTube link here]_
+<!-- 🎥 **Demo Video:** _[add your Loom/YouTube link here]_ -->
 💻 **Repo:** [https://github.com/anamulhoquewd/learnBridge](https://github.com/anamulhoquewd/learnBridge)
 
 ---
@@ -45,8 +45,6 @@ But I only had **5 days off** to actually build it. So the full roadmap got comp
 
 ## Screenshots
 
-> Replace the image paths below with your own files (e.g. drop them in a `screenshots/` folder at the project root) and swap in your own short description for each. A few examples are filled in — add/remove rows as needed for the screenshots you have.
-
 ### Landing Page
 ![Landing page](./public/screenshots/home.png)
 _The homepage — hero section, value props, and calls-to-action for both students and tutors._
@@ -72,7 +70,7 @@ _Tutor view of incoming requests, with Accept/Reject actions._
 _A student's booking history with live status (Pending / Confirmed / Rejected / Cancelled)._
 
 ### Stripe Checkout
-![Stripe checkout](./screenshots/stripe-checkout.png)
+![Stripe checkout](./public/screenshots/checkout-stripe.png)
 _Secure payment for a confirmed session, powered by Stripe (test mode)._
 
 ---
