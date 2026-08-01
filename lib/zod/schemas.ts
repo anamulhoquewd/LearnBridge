@@ -9,7 +9,11 @@ export const tutorProfileSchema = z.object({
   email: z.email().optional(),
 })
 
-export type TutorProfileFormValues = z.infer<typeof tutorProfileSchema>
+// Input type (form values)
+export type TutorProfileFormInput = z.input<typeof tutorProfileSchema>
+
+// Parsed type (after zod)
+export type TutorProfileData = z.output<typeof tutorProfileSchema>
 
 export const studentProfileSchema = z.object({
   name: z.string().optional(),

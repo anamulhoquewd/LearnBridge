@@ -25,7 +25,11 @@ import { toast } from "@/components/ui/toast"
 import { TutorProfileWithUser } from "@/interfaces"
 import api from "@/lib/axios/api"
 import { SUBJECT_OPTIONS } from "@/lib/constant"
-import { TutorProfileFormValues, tutorProfileSchema } from "@/lib/zod/schemas"
+import {
+  TutorProfileData,
+  TutorProfileFormInput,
+  tutorProfileSchema,
+} from "@/lib/zod/schemas"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { AlertCircleIcon, CloudUpload } from "lucide-react"
 import { useEffect, useState } from "react"
@@ -38,7 +42,7 @@ export function TutorProfileForm() {
   const [loading, setLoading] = useState<boolean>(false)
   const [avatarModalOpen, setAvatarModalOpen] = useState(false)
 
-  const form = useForm<TutorProfileFormValues>({
+  const form = useForm<TutorProfileFormInput>({
     resolver: zodResolver(tutorProfileSchema),
     defaultValues: {
       email: "",
@@ -49,8 +53,9 @@ export function TutorProfileForm() {
       subjects: [],
     },
   })
+  type FormValues = typeof form.getValues
 
-  const handleSubmit = async (data: TutorProfileFormValues) => {
+  const handleSubmit = async (data: TutorProfileData) => {
     try {
       const response = await toast.promise(api.put("/tutor-profile", data), {
         loading: "Updating...",
@@ -71,8 +76,8 @@ export function TutorProfileForm() {
     }
   }
 
-  const onSubmit: SubmitHandler<TutorProfileFormValues> = async (
-    data: TutorProfileFormValues
+  const onSubmit: SubmitHandler<TutorProfileData> = async (
+    data: TutorProfileData
   ) => {
     await handleSubmit(data)
   }
@@ -236,35 +241,45 @@ export function TutorProfileForm() {
             <Controller
               name="hourlyRate"
               control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor={field.name}>Hourly rate</FieldLabel>
-                  {loading ? (
-                    <Skeleton className="h-10 w-full rounded-md" />
-                  ) : (
-                    <InputGroup>
-                      <InputGroupAddon>
-                        <InputGroupText>$</InputGroupText>
-                      </InputGroupAddon>
-                      <InputGroupInput
-                        {...field}
-                        id={field.name}
-                        aria-invalid={fieldState.invalid}
-                        placeholder="How much do you want to charge per hour for your services?"
-                        autoComplete="off"
-                        type="number"
-                      />
-                      <InputGroupAddon align="inline-end">
-                        <InputGroupText>USD</InputGroupText>
-                      </InputGroupAddon>
-                    </InputGroup>
-                  )}
+              render={({ field, fieldState }) => {
+                type T = typeof field.value
+                return (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>Hourly rate</FieldLabel>
+                    {loading ? (
+                      <Skeleton className="h-10 w-full rounded-md" />
+                    ) : (
+                      <InputGroup>
+                        <InputGroupAddon>
+                          <InputGroupText>$</InputGroupText>
+                        </InputGroupAddon>
+                        <InputGroupInput
+                          {...field}
+                          id={field.name}
+                          aria-invalid={fieldState.invalid}
+                          placeholder="How much do you want to charge per hour for your services?"
+                          autoComplete="off"
+                          type="number"
+                          onChange={(e) => {
+                            const value = e.target.value
 
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
+                            field.onChange(
+                              value === "" ? undefined : e.target.valueAsNumber
+                            )
+                          }}
+                        />
+                        <InputGroupAddon align="inline-end">
+                          <InputGroupText>USD</InputGroupText>
+                        </InputGroupAddon>
+                      </InputGroup>
+                    )}
+
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )
+              }}
             />
             <Controller
               name="experience"
@@ -285,6 +300,13 @@ export function TutorProfileForm() {
                         placeholder="How many years of experience do you have in the service you want to offer?"
                         autoComplete="off"
                         type="number"
+                        onChange={(e) => {
+                          const value = e.target.value
+
+                          field.onChange(
+                            value === "" ? undefined : e.target.valueAsNumber
+                          )
+                        }}
                       />
                       <InputGroupAddon align="inline-end">
                         <InputGroupText>years</InputGroupText>

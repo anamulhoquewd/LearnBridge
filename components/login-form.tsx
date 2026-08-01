@@ -66,7 +66,7 @@ export function LoginForm({
 
       const role = authData.user?.user_metadata?.role
       router.push(role === "TUTOR" ? "/tutor" : "/student")
-      router.refresh() // Essential for picking up a new session in server components.
+      // router.refresh() // Essential for picking up a new session in server components.
     } catch (error: any) {
       const friendlyMessage = getFriendlyErrorMessage(
         error?.code,
